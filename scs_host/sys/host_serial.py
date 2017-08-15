@@ -9,8 +9,6 @@ https://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/port
 import serial
 import time
 
-import Adafruit_BBIO.UART as UART
-
 from scs_host.lock.lock import Lock
 
 
@@ -23,7 +21,6 @@ class HostSerial(object):
 
     EOL =               "\r\n"
 
-    __UART_PREFIX =     "UART"
     __PORT_PREFIX =     "/dev/ttyO"           # hard-coded path
 
 
@@ -36,10 +33,6 @@ class HostSerial(object):
         self.__port_number = port_number
         self.__baud_rate = baud_rate
         self.__hard_handshake = hard_handshake
-
-        uart = HostSerial.__UART_PREFIX + str(self.__port_number)
-
-        UART.setup(uart)
 
         self.__ser = None
 
