@@ -16,8 +16,6 @@ chmod a+rw /sys/devices/platform/bone_capemgr/slots
 import spidev
 
 
-# TODO: does this work with current BBe o/s configuration?
-
 # TODO: put tx lock in open / close
 
 # --------------------------------------------------------------------------------------------------------------------
