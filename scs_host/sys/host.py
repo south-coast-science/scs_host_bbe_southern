@@ -36,6 +36,8 @@ class Host(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    __GPS_DEVICE =      1                                   # hard-coded path
+
     __NDIR_DEVICE =     "/dev/ttyUSB0"                      # hard-coded path
 
     __PSU_DEVICE =      5                                   # hard-coded path
@@ -72,13 +74,18 @@ class Host(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
+    def gps_device(cls):
+        return cls.__GPS_DEVICE             # we might have to search for it instead
+
+
+    @classmethod
     def ndir_device(cls):
         return cls.__NDIR_DEVICE            # we might have to search for it instead
 
 
     @classmethod
     def psu_device(cls):
-        return cls.__PSU_DEVICE            # we might have to search for it instead
+        return cls.__PSU_DEVICE             # we might have to search for it instead
 
 
     # ----------------------------------------------------------------------------------------------------------------
