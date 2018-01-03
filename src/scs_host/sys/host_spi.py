@@ -32,7 +32,7 @@ class HostSPI(object):
         Constructor
         """
 
-        self.__connection = bus
+        self.__bus = bus
         self.__device = device
         self.__mode = mode
         self.__max_speed = max_speed
@@ -47,7 +47,7 @@ class HostSPI(object):
             return
 
         self.__connection = spidev.SpiDev()
-        self.__connection.open(self.__connection, self.__device)
+        self.__connection.open(self.__bus, self.__device)
 
         self.__connection.mode = self.__mode
         self.__connection.max_speed_hz = self.__max_speed
@@ -71,8 +71,8 @@ class HostSPI(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "HostSPI:{bus:%d, device:%s, mode:%d, max_speed:%d, bus:%s}" % \
-               (self.__connection, self.__device, self.__mode, self.__max_speed, self.__connection)
+        return "HostSPI:{bus:%d, device:%s, mode:%d, max_speed:%d, connection:%s}" % \
+               (self.__bus, self.__device, self.__mode, self.__max_speed, self.__connection)
 
 
 
