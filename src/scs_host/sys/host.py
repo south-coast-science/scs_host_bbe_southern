@@ -19,6 +19,12 @@ class Host(object):
     TI Sitara AM3358AZCZ100 processor
     """
 
+    OPC_SPI_BUS =       1
+    OPC_SPI_DEVICE =    0
+
+    NDIR_SPI_BUS =      2
+    NDIR_SPI_DEVICE =   0
+
     I2C_EEPROM =        2
     I2C_SENSORS =       2
 
