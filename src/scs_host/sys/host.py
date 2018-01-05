@@ -11,45 +11,50 @@ import os
 import socket
 import subprocess
 
+from scs_core.sys.node import Node
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Host(object):
+class Host(Node):
     """
     TI Sitara AM3358AZCZ100 processor
     """
 
-    OPC_SPI_BUS =       1
-    OPC_SPI_DEVICE =    0
+    I2C_EEPROM =            2
+    I2C_SENSORS =           2
 
-    NDIR_SPI_BUS =      2
-    NDIR_SPI_DEVICE =   0
+    DFE_EEPROM_ADDR =       0x50
+    DFE_UID_ADDR =          0x58
 
-    I2C_EEPROM =        2
-    I2C_SENSORS =       2
+    COMMAND_DIR =           "/home/scs/SCS/cmd/"                # hard-coded path
 
-    DFE_EEPROM_ADDR =   0x50
-    DFE_UID_ADDR =      0x58
+    DFE_EEP_IMAGE =         "/home/scs/SCS/dfe_cape.eep"        # hard-coded path
 
-    COMMAND_DIR =       "/home/scs/SCS/cmd/"                # hard-coded path
+    SCS_LOCK =              "/run/lock/southcoastscience/"      # hard-coded path
 
-    DFE_EEP_IMAGE =     "/home/scs/SCS/dfe_cape.eep"        # hard-coded path
-
-    SCS_LOCK =          "/run/lock/southcoastscience/"      # hard-coded path
-
-    SCS_TMP =           "/tmp/southcoastscience/"           # hard-coded path
+    SCS_TMP =               "/tmp/southcoastscience/"           # hard-coded path
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    __GPS_DEVICE =      1                                   # hard-coded path
+    __OPC_SPI_BUS =         1                                   # based on spidev
+    __OPC_SPI_DEVICE =      0                                   # based on spidev
 
-    __NDIR_DEVICE =     "/dev/ttyUSB0"                      # hard-coded path
+    __NDIR_SPI_BUS =        2                                   # based on spidev
+    __NDIR_SPI_DEVICE =     0                                   # based on spidev
 
-    __PSU_DEVICE =      5                                   # hard-coded path
+    __GPS_DEVICE =          1                                   # hard-coded path
 
-    __SCS_CONF =        "/home/scs/SCS/conf/"               # hard-coded path
-    __SCS_OSIO =        "/home/scs/SCS/osio/"               # hard-coded path
+    __NDIR_DEVICE =         "/dev/ttyUSB0"                      # hard-coded path       - Alphasense USB device
+
+    __PSU_DEVICE =          5                                   # hard-coded path
+
+    __SCS =                 "/home/scs/SCS/"                    # hard-coded path
+
+    __SCS_CONF =            "conf/"                             # hard-coded path
+    __SCS_AWS =             "aws/"                              # hard-coded path
+    __SCS_OSIO =            "osio/"                             # hard-coded path
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -102,10 +107,40 @@ class Host(object):
 
 
     @classmethod
+    def ndir_spi_bus(cls):
+        return cls.__NDIR_SPI_BUS
+
+
+    @classmethod
+    def ndir_spi_device(cls):
+        return cls.__NDIR_SPI_DEVICE
+
+
+    @classmethod
+    def opc_spi_bus(cls):
+        return cls.__OPC_SPI_BUS
+
+
+    @classmethod
+    def opc_spi_device(cls):
+        return cls.__OPC_SPI_DEVICE
+
+
+    @classmethod
+    def scs_dir(cls):
+        return cls.__SCS
+
+
+    @classmethod
     def conf_dir(cls):
-        return cls.__SCS_CONF
+        return cls.__SCS + cls.__SCS_CONF
+
+
+    @classmethod
+    def aws_dir(cls):
+        return cls.__SCS + cls.__SCS_AWS
 
 
     @classmethod
     def osio_dir(cls):
-        return cls.__SCS_OSIO
+        return cls.__SCS + cls.__SCS_OSIO
