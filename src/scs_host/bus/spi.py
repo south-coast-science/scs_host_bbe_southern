@@ -15,8 +15,8 @@ chmod a+rw /sys/devices/platform/bone_capemgr/slots
 
 from spidev import SpiDev
 
+from scs_host.lock.lock import Lock
 
-# TODO: put tx lock in open / close
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -24,6 +24,8 @@ class SPI(object):
     """
     classdocs
     """
+    __LOCK_TIMEOUT =        2.0
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -46,6 +48,8 @@ class SPI(object):
         if self.__connection:
             return
 
+        Lock.acquire(SPI.__name__ + self.__bus, SPI.__LOCK_TIMEOUT)
+
         self.__connection = SpiDev()
         self.__connection.open(self.__bus, self.__device)
 
@@ -54,8 +58,14 @@ class SPI(object):
 
 
     def close(self):
+        if self.__connection is None:
+            return
+
         self.__connection.close()
         self.__connection = None
+
+        Lock.release(SPI.__name__ + self.__bus)
+
 
 
     # ----------------------------------------------------------------------------------------------------------------
