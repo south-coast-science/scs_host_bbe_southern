@@ -13,14 +13,14 @@ cape_enable=bone_capemgr.enable_partno=BB-SPIDEV0,BB-SPIDEV1
 chmod a+rw /sys/devices/platform/bone_capemgr/slots
 """
 
-import spidev
+from spidev import SpiDev
 
 
 # TODO: put tx lock in open / close
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class HostSPI(object):
+class SPI(object):
     """
     classdocs
     """
@@ -46,7 +46,7 @@ class HostSPI(object):
         if self.__connection:
             return
 
-        self.__connection = spidev.SpiDev()
+        self.__connection = SpiDev()
         self.__connection.open(self.__bus, self.__device)
 
         self.__connection.mode = self.__mode
@@ -71,7 +71,7 @@ class HostSPI(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "HostSPI:{bus:%d, device:%s, mode:%d, max_speed:%d, connection:%s}" % \
+        return "SPI:{bus:%d, device:%s, mode:%d, max_speed:%d, connection:%s}" % \
                (self.__bus, self.__device, self.__mode, self.__max_speed, self.__connection)
 
 
