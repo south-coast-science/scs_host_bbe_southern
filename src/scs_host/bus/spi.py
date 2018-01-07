@@ -24,7 +24,7 @@ class SPI(object):
     """
     classdocs
     """
-    __LOCK_TIMEOUT =        2.0
+    __LOCK_TIMEOUT =        1.0
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -67,7 +67,6 @@ class SPI(object):
         Lock.release(SPI.__name__ + self.__bus)
 
 
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def xfer(self, args):
@@ -83,6 +82,3 @@ class SPI(object):
     def __str__(self, *args, **kwargs):
         return "SPI:{bus:%d, device:%s, mode:%d, max_speed:%d, connection:%s}" % \
                (self.__bus, self.__device, self.__mode, self.__max_speed, self.__connection)
-
-
-
