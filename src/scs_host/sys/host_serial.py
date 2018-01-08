@@ -50,7 +50,7 @@ class HostSerial(object):
         self.__ser = Serial(port=port, baudrate=self.__baud_rate, rtscts=self.__hard_handshake, dsrdtr=False,
                             timeout=comms_timeout)
 
-        time.sleep(0.3)     # as GE910
+        time.sleep(0.5)     # as GE910 - 0.3
 
 
     def close(self):
