@@ -48,7 +48,7 @@ class SPI(object):
         if self.__connection:
             return
 
-        Lock.acquire(SPI.__name__ + self.__bus, SPI.__LOCK_TIMEOUT)
+        Lock.acquire(SPI.__name__ + str(self.__bus), SPI.__LOCK_TIMEOUT)
 
         self.__connection = SpiDev()
         self.__connection.open(self.__bus, self.__device)
@@ -64,7 +64,7 @@ class SPI(object):
         self.__connection.close()
         self.__connection = None
 
-        Lock.release(SPI.__name__ + self.__bus)
+        Lock.release(SPI.__name__ + str(self.__bus))
 
 
     # ----------------------------------------------------------------------------------------------------------------
