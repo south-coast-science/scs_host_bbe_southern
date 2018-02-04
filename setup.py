@@ -7,11 +7,12 @@ with open('requirements.txt') as req_txt:
 setup(
     name='scs_host_bbe_southern',
     version='0.1.0',
-    description='Host abstractions for data producers or consumers running South Coast Science Debian on the BeagleBone Black.',
+    description='Host abstractions for data producers or consumers running South Coast Science Debian on the \
+    BeagleBone Black.',
     author='South Coast Science',
     author_email='contact@southcoastscience.com',
     url='https://github.com/south-coast-science/scs_host_bbe_southern',
-    package_dir={'':'src'},
+    package_dir={'': 'src'},
     packages=find_packages('src'),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -27,4 +28,3 @@ setup(
     platforms=['any'],
     python_requires=">=3.3",
 )
-   
