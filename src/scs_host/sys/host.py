@@ -11,6 +11,7 @@ import os
 import socket
 import subprocess
 
+from pathlib import Path
 from scs_core.sys.node import Node
 
 
@@ -26,10 +27,13 @@ class Host(Node):
 
     DFE_EEPROM_ADDR =       0x50
     DFE_UID_ADDR =          0x58
+    if "SCS_ROOT_PATH" in os.environ:
+        __SCS = os.environ["SCS_ROOT_PATH"]  # hard-coded path
+    else:
+        __SCS = os.path.join(str(Path.home()), "SCS")
+    COMMAND_DIR =           os.path.join(__SCS, "cmd")                # hard-coded path
 
-    COMMAND_DIR =           "/home/scs/SCS/cmd/"                # hard-coded path
-
-    DFE_EEP_IMAGE =         "/home/scs/SCS/dfe_cape.eep"        # hard-coded path
+    DFE_EEP_IMAGE =         os.path.join(__SCS, "dfe_cape.eep")        # hard-coded path
 
     SCS_LOCK =              "/run/lock/southcoastscience/"      # hard-coded path
 
@@ -49,8 +53,6 @@ class Host(Node):
     __NDIR_USB_DEVICE =     "/dev/ttyUSB0"                      # hard-coded path       - Alphasense USB device
 
     __PSU_DEVICE =          5                                   # hard-coded path
-
-    __SCS =                 "/home/scs/SCS/"                    # hard-coded path
 
     __SCS_CONF =            "conf/"                             # hard-coded path
     __SCS_AWS =             "aws/"                              # hard-coded path
@@ -133,14 +135,14 @@ class Host(Node):
 
     @classmethod
     def conf_dir(cls):
-        return cls.__SCS + cls.__SCS_CONF
+        return os.path.join(cls.__SCS, cls.__SCS_CONF)
 
 
     @classmethod
     def aws_dir(cls):
-        return cls.__SCS + cls.__SCS_AWS
+        return os.path.join(cls.__SCS, cls.__SCS_AWS)
 
 
     @classmethod
     def osio_dir(cls):
-        return cls.__SCS + cls.__SCS_OSIO
+        return os.path.join(cls.__SCS, cls.__SCS_OSIO)
