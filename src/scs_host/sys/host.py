@@ -133,7 +133,7 @@ class Host(Node):
 
     @classmethod
     def home_dir(cls):
-        return os.environ['SCS_ROOT_PATH'] if 'SCS_ROOT_PATH' in os.environ else cls.__DEFAULT_HOME_DIR
+        return os.environ['SCS_ROOT_PATH'] + '/' if 'SCS_ROOT_PATH' in os.environ else cls.__DEFAULT_HOME_DIR
 
 
     @classmethod
