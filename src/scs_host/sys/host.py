@@ -27,6 +27,7 @@ class Host(Node):
     DFE_EEPROM_ADDR =       0x50
     DFE_UID_ADDR =          0x58
 
+
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
@@ -132,7 +133,7 @@ class Host(Node):
 
     @classmethod
     def home_dir(cls):
-        return cls.__DEFAULT_HOME_DIR
+        return os.environ['SCS_ROOT_PATH'] if 'SCS_ROOT_PATH' in os.environ else cls.__DEFAULT_HOME_DIR
 
 
     @classmethod
