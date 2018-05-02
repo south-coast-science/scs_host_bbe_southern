@@ -13,11 +13,9 @@ import multiprocessing
 import sys
 import time
 
-import posix_ipc
-
 from scs_core.sync.interval_timer import IntervalTimer
 
-from scs_host.sync.binary_semaphore import BinarySemaphore
+from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -124,7 +122,7 @@ class SchedulerItem(object):
                 # disable...
                 self.__mutex.acquire(self.item.interval)
 
-            except posix_ipc.BusyError:
+            except BusyError:
                 # release...
                 self.__mutex.release()
 

@@ -32,7 +32,10 @@ class BinarySemaphore(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def acquire(self, timeout=None):
-        self.__semaphore.acquire(timeout)
+        try:
+            self.__semaphore.acquire(timeout)
+        except posix_ipc.BusyError:
+            raise BusyError()
 
         while self.__semaphore.value > 0:
             self.__semaphore.acquire()                    # limit the value to 0 or 1
@@ -53,3 +56,19 @@ class BinarySemaphore(object):
 
     def __str__(self, *args, **kwargs):
         return "BinarySemaphore:{name:%s}" % self.name
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class BusyError(posix_ipc.BusyError):
+    """
+    classdocs
+    """
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self):
+        """
+        Constructor
+        """
+        super(BusyError, self).__init__()
