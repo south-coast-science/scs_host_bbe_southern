@@ -11,10 +11,9 @@ http://semanchuk.com/philip/posix_ipc/#semaphore
 import sys
 import time
 
-import posix_ipc
-
 from scs_core.sync.runner import Runner
 
+from scs_host.sync.mutex import Mutex
 from scs_host.sync.scheduler import Scheduler
 
 
@@ -34,29 +33,16 @@ class ScheduleRunner(Runner):
         self.__name = name
         self.__verbose = verbose
 
+        self.__mutex = Mutex(self.name)
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def reset(self):
-        sem = posix_ipc.Semaphore(self.name, flags=posix_ipc.O_CREAT)
-
-        while sem.value > 0:
-            sem.acquire()           # clear excessive semaphore counts
-
-
     def samples(self, sampler):
-        sem = posix_ipc.Semaphore(self.name, flags=posix_ipc.O_CREAT)
-
-        # reset...
-        self.reset()
-
         while True:
             try:
                 # start...
-                sem.acquire()
-
-                while sem.value > 0:
-                    sem.acquire()       # clear excessive semaphore counts
+                self.__mutex.acquire()
 
                 if self.verbose:
                     print('%s: start' % self.name, file=sys.stderr)
@@ -66,13 +52,17 @@ class ScheduleRunner(Runner):
 
             finally:
                 # done...
-                sem.release()
+                self.__mutex.release()
 
                 if self.verbose:
                     print('%s: done' % self.name, file=sys.stderr)
                     sys.stderr.flush()
 
                 time.sleep(Scheduler.HOLD_PERIOD)
+
+
+    def reset(self):
+        pass
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -90,4 +80,4 @@ class ScheduleRunner(Runner):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "ScheduleRunner:{name:%s, verbose:%s}" % (self.name, self.verbose)
+        return "ScheduleRunner:{name:%s, verbose:%s, mutex:%s}" % (self.name, self.verbose, self.__mutex)
