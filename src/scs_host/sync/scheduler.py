@@ -121,6 +121,8 @@ class SchedulerItem(object):
                 # disable...
                 sem.acquire(self.item.interval)
 
+                # TODO: clear excessive semaphore counts?
+
             except posix_ipc.BusyError:
                 # release...
                 sem.release()

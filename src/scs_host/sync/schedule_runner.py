@@ -56,7 +56,7 @@ class ScheduleRunner(Runner):
                 sem.acquire()
 
                 while sem.value > 0:
-                    sem.acquire()  # clear excessive semaphore counts
+                    sem.acquire()       # clear excessive semaphore counts
 
                 if self.verbose:
                     print('%s: start' % self.name, file=sys.stderr)
