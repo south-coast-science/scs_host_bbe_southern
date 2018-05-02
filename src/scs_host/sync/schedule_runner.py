@@ -13,7 +13,7 @@ import time
 
 from scs_core.sync.runner import Runner
 
-from scs_host.sync.mutex import Mutex
+from scs_host.sync.binary_semaphore import BinarySemaphore
 from scs_host.sync.scheduler import Scheduler
 
 
@@ -33,7 +33,7 @@ class ScheduleRunner(Runner):
         self.__name = name
         self.__verbose = verbose
 
-        self.__mutex = Mutex(self.name)
+        self.__mutex = BinarySemaphore(self.name)
 
 
     # ----------------------------------------------------------------------------------------------------------------

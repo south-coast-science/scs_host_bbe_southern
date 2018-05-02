@@ -3,7 +3,7 @@ Created on 2 May 2018
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-A mutex binary semaphore abstraction over the posix_ipc.Semaphore.
+A binary semaphore abstraction over the posix_ipc.Semaphore.
 
 https://en.wikipedia.org/wiki/Semaphore_(programming)
 http://semanchuk.com/philip/posix_ipc/#semaphore
@@ -14,7 +14,7 @@ import posix_ipc
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Mutex(object):
+class BinarySemaphore(object):
     """
     classdocs
     """
@@ -52,4 +52,4 @@ class Mutex(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "Mutex:{name:%s}" % self.name
+        return "BinarySemaphore:{name:%s}" % self.name

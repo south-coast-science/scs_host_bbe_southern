@@ -17,7 +17,7 @@ import posix_ipc
 
 from scs_core.sync.interval_timer import IntervalTimer
 
-from scs_host.sync.mutex import Mutex
+from scs_host.sync.binary_semaphore import BinarySemaphore
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ class SchedulerItem(object):
         self.__item = item
         self.__verbose = verbose
 
-        self.__mutex = Mutex(self.item.name)
+        self.__mutex = BinarySemaphore(self.item.name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
