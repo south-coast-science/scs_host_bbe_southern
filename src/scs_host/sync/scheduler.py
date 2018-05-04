@@ -13,9 +13,9 @@ import multiprocessing
 import sys
 import time
 
-import posix_ipc
-
 from scs_core.sync.interval_timer import IntervalTimer
+
+from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -100,11 +100,12 @@ class SchedulerItem(object):
         self.__item = item
         self.__verbose = verbose
 
+        self.__mutex = BinarySemaphore(self.item.name)
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
-        sem = posix_ipc.Semaphore(self.item.name, flags=posix_ipc.O_CREAT)
         timer = IntervalTimer(self.item.interval)
 
         while timer.true():
@@ -113,17 +114,17 @@ class SchedulerItem(object):
                 sys.stderr.flush()
 
             # enable...
-            sem.release()
+            self.__mutex.release()
 
             time.sleep(Scheduler.RELEASE_PERIOD)        # release period: hand semaphore to sampler
 
             try:
                 # disable...
-                sem.acquire(self.item.interval)
+                self.__mutex.acquire(self.item.interval)
 
-            except posix_ipc.BusyError:
+            except BusyError:
                 # release...
-                sem.release()
+                self.__mutex.release()
 
                 print('%s: release' % self.item.name, file=sys.stderr)
                 sys.stderr.flush()
@@ -144,4 +145,4 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SchedulerItem:{item:%s, verbose:%s}" % (self.item, self.verbose)
+        return "SchedulerItem:{item:%s, verbose:%s, mutex:%s}" % (self.item, self.verbose, self.__mutex)
