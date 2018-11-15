@@ -73,6 +73,10 @@ class SPI(object):
         self.__connection.xfer(args)
 
 
+    def xfer2(self, args):
+        self.__connection.xfer2(args)
+
+
     def read_bytes(self, count):
         return self.__connection.readbytes(count)
 
