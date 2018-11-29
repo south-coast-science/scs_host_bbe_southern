@@ -14,4 +14,6 @@ from scs_host.sys.host import Host
 spi_path = '/ocp/spi@48030000'
 spi_device = '0'
 
-Host.spi_bus(spi_path, spi_device)
+bus = Host.spi_bus(spi_path, spi_device)
+
+print("bus:%d" % bus)
