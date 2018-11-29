@@ -36,15 +36,15 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_LOCATION =    '48030000'                          # hard-coded path
+    __OPC_SPI_LOCATION =    '48030000'                          # hard-coded memory-mapped io address
     __OPC_SPI_DEVICE =      0
 
-    __NDIR_SPI_LOCATION =   '481a0000'                          # hard-coded path
+    __NDIR_SPI_LOCATION =   '481a0000'                          # hard-coded memory-mapped io address
     __NDIR_SPI_DEVICE =     0
 
     __GPS_DEVICE =          1                                   # hard-coded path
 
-    __NDIR_USB_DEVICE =     '/dev/ttyUSB0'                      # hard-coded path       - Alphasense USB device
+    __NDIR_USB_DEVICE =     '/dev/ttyUSB0'                      # hard-coded path (Alphasense USB device)
 
     __PSU_DEVICE =          5                                   # hard-coded path
 
