@@ -11,4 +11,7 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-Host.spi_physical_location()
+spi_path = '/ocp/spi@48030000'
+spi_device = '0'
+
+Host.spi_bus(spi_path, spi_device)

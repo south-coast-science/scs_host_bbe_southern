@@ -36,9 +36,11 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
+    __OPC_SPI_PATH =        '/ocp/48030000'
     __OPC_SPI_BUS =         1                                   # based on spidev
     __OPC_SPI_DEVICE =      0                                   # based on spidev
 
+    __NDIR_SPI_PATH =       '/ocp/481a0000'
     __NDIR_SPI_BUS =        2                                   # based on spidev
     __NDIR_SPI_DEVICE =     0                                   # based on spidev
 
@@ -74,11 +76,9 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def spi_physical_location():                                   # logical_bus, logical_device
-        beaglebone_opc_spibus = '/ocp/spi@48030000'
-        beaglebone_opc_spidevice_number = '0'
+    def spi_bus(spi_path, spi_device):
 
-        beaglebone_opc_kernelpath = beaglebone_opc_spibus + '/channel@' + beaglebone_opc_spidevice_number
+        beaglebone_opc_kernel_path = spi_path + '/channel@' + spi_device
         opc_spidev = None
 
         context = pyudev.Context()
@@ -87,9 +87,17 @@ class Host(Node):
             parent_node = device.parent
             print("parent_node: %s" % parent_node)
 
-            if type(parent_node) is not None and 'OF_FULLNAME' in parent_node and \
-                    parent_node['OF_FULLNAME'] == beaglebone_opc_kernelpath:
-                opc_spidev = device.device_node
+            print("type: %s" % type(parent_node))
+            print("OF_FULLNAME: %s" % parent_node['OF_FULLNAME'])
+
+            print("node: %s" % device.device_node)
+            print("-")
+
+            # if type(parent_node) is not None and 'OF_FULLNAME' in parent_node and \
+            #         parent_node['OF_FULLNAME'] == beaglebone_opc_kernel_path:
+            #     opc_spidev = device.device_node
+
+
 
         if opc_spidev:
             print("To access the OPC, use:\n\n" + opc_spidev)
