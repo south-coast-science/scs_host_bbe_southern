@@ -12,7 +12,6 @@ import pyudev
 import re
 import socket
 import subprocess
-import sys
 
 from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.node import Node
@@ -37,10 +36,10 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_PATH =        '/ocp/spi@48030000'                 # hard-coded path
+    __OPC_SPI_LOCATION =    '48030000'                          # hard-coded path
     __OPC_SPI_DEVICE =      0
 
-    __NDIR_SPI_PATH =       '/ocp/spi@481a0000'                 # hard-coded path
+    __NDIR_SPI_LOCATION =   '481a0000'                          # hard-coded path
     __NDIR_SPI_DEVICE =     0
 
     __GPS_DEVICE =          1                                   # hard-coded path
@@ -75,24 +74,16 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def spi_bus(spi_path, spi_device):
+    def spi_bus(spi_location, spi_device):
         context = pyudev.Context()
 
-        kernel_path = spi_path + '/channel@' + str(spi_device)
-        # print("kernel_path: %s" % kernel_path)
+        kernel_path = '/ocp/spi@' + spi_location + '/channel@' + str(spi_device)
 
         for device in context.list_devices(subsystem='spidev'):
-            # parent_node = device.parent
-            # print("parent_node: %s" % parent_node)
-
-            # print("type: %s" % type(parent_node))
-            # print("OF_FULLNAME: %s" % parent_node['OF_FULLNAME'])
-            # print("-")
-
             if device.parent['OF_FULLNAME'] == kernel_path:
-                # print("node: %s" % device.device_node)
+                node = device.device_node
 
-                match = re.match('[^0-9]+([0-9]+).[0-9]+', device.device_node)      # e.g. /dev/spidev1.0
+                match = re.match('[^0-9]+([0-9]+).[0-9]+', node)            # e.g. /dev/spidev1.0
                 groups = match.groups()
 
                 return int(groups[0])
@@ -151,7 +142,7 @@ class Host(Node):
 
     @classmethod
     def ndir_spi_bus(cls):
-        return cls.spi_bus(cls.__NDIR_SPI_PATH, cls.__NDIR_SPI_DEVICE)
+        return cls.spi_bus(cls.__NDIR_SPI_LOCATION, cls.__NDIR_SPI_DEVICE)
 
 
     @classmethod
@@ -161,7 +152,7 @@ class Host(Node):
 
     @classmethod
     def opc_spi_bus(cls):
-        return cls.spi_bus(cls.__OPC_SPI_PATH, cls.__OPC_SPI_DEVICE)
+        return cls.spi_bus(cls.__OPC_SPI_LOCATION, cls.__OPC_SPI_DEVICE)
 
 
     @classmethod
