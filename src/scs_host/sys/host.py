@@ -82,25 +82,20 @@ class Host(Node):
         # print("kernel_path: %s" % kernel_path)
 
         for device in context.list_devices(subsystem='spidev'):
-            parent_node = device.parent
+            # parent_node = device.parent
             # print("parent_node: %s" % parent_node)
 
             # print("type: %s" % type(parent_node))
             # print("OF_FULLNAME: %s" % parent_node['OF_FULLNAME'])
             # print("-")
 
-            if parent_node['OF_FULLNAME'] == kernel_path:
-                # opc_spidev = device.device_node
-
+            if device.parent['OF_FULLNAME'] == kernel_path:
                 # print("node: %s" % device.device_node)
 
                 match = re.match('[^0-9]+([0-9]+).[0-9]+', device.device_node)      # e.g. /dev/spidev1.0
-                # print("match: %s" % match)
+                groups = match.groups()
 
-                fields = match.groups()
-                # print("bus: %s" % fields[0])
-
-                return int(fields[0])
+                return int(groups[0])
 
         raise OSError("No SPI bus could be found for %s" % kernel_path)
 
@@ -156,7 +151,7 @@ class Host(Node):
 
     @classmethod
     def ndir_spi_bus(cls):
-        return cls.__NDIR_SPI_BUS
+        return cls.spi_bus(cls.__NDIR_SPI_PATH, cls.__NDIR_SPI_DEVICE)
 
 
     @classmethod
@@ -167,7 +162,6 @@ class Host(Node):
     @classmethod
     def opc_spi_bus(cls):
         return cls.spi_bus(cls.__OPC_SPI_PATH, cls.__OPC_SPI_DEVICE)
-        # return cls.__OPC_SPI_BUS
 
 
     @classmethod
