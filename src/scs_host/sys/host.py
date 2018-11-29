@@ -9,6 +9,7 @@ http://dumb-looks-free.blogspot.co.uk/2014/05/beaglebone-black-bbb-revision-seri
 
 import os
 import pyudev
+import re
 import socket
 import subprocess
 import sys
@@ -36,13 +37,11 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_PATH =        '/ocp/48030000'
-    __OPC_SPI_BUS =         1                                   # based on spidev
-    __OPC_SPI_DEVICE =      0                                   # based on spidev
+    __OPC_SPI_PATH =        '/ocp/spi@48030000'                 # hard-coded path
+    __OPC_SPI_DEVICE =      0
 
-    __NDIR_SPI_PATH =       '/ocp/481a0000'
-    __NDIR_SPI_BUS =        2                                   # based on spidev
-    __NDIR_SPI_DEVICE =     0                                   # based on spidev
+    __NDIR_SPI_PATH =       '/ocp/spi@481a0000'                 # hard-coded path
+    __NDIR_SPI_DEVICE =     0
 
     __GPS_DEVICE =          1                                   # hard-coded path
 
@@ -77,33 +76,33 @@ class Host(Node):
 
     @staticmethod
     def spi_bus(spi_path, spi_device):
-
-        beaglebone_opc_kernel_path = spi_path + '/channel@' + spi_device
-        opc_spidev = None
-
         context = pyudev.Context()
+
+        kernel_path = spi_path + '/channel@' + str(spi_device)
+        # print("kernel_path: %s" % kernel_path)
 
         for device in context.list_devices(subsystem='spidev'):
             parent_node = device.parent
-            print("parent_node: %s" % parent_node)
+            # print("parent_node: %s" % parent_node)
 
-            print("type: %s" % type(parent_node))
-            print("OF_FULLNAME: %s" % parent_node['OF_FULLNAME'])
+            # print("type: %s" % type(parent_node))
+            # print("OF_FULLNAME: %s" % parent_node['OF_FULLNAME'])
+            # print("-")
 
-            print("node: %s" % device.device_node)
-            print("-")
+            if parent_node['OF_FULLNAME'] == kernel_path:
+                # opc_spidev = device.device_node
 
-            # if type(parent_node) is not None and 'OF_FULLNAME' in parent_node and \
-            #         parent_node['OF_FULLNAME'] == beaglebone_opc_kernel_path:
-            #     opc_spidev = device.device_node
+                # print("node: %s" % device.device_node)
 
+                match = re.match('[^0-9]+([0-9]+).[0-9]+', device.device_node)      # e.g. /dev/spidev1.0
+                # print("match: %s" % match)
 
+                fields = match.groups()
+                # print("bus: %s" % fields[0])
 
-        if opc_spidev:
-            print("To access the OPC, use:\n\n" + opc_spidev)
-        else:
-            print("OPC spidev not found")
-            sys.exit(1)
+                return int(fields[0])
+
+        raise OSError("No SPI bus could be found for %s" % kernel_path)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -167,7 +166,8 @@ class Host(Node):
 
     @classmethod
     def opc_spi_bus(cls):
-        return cls.__OPC_SPI_BUS
+        return cls.spi_bus(cls.__OPC_SPI_PATH, cls.__OPC_SPI_DEVICE)
+        # return cls.__OPC_SPI_BUS
 
 
     @classmethod
