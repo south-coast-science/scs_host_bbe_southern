@@ -8,8 +8,10 @@ http://dumb-looks-free.blogspot.co.uk/2014/05/beaglebone-black-bbb-revision-seri
 """
 
 import os
+import pyudev
 import socket
 import subprocess
+import sys
 
 from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.node import Node
@@ -67,6 +69,33 @@ class Host(Node):
     # commands...
 
     __SHUTDOWN_CMD =        '/sbin/shutdown'                    # hard-coded path
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def spi_physical_location():                                   # logical_bus, logical_device
+        beaglebone_opc_spibus = '/ocp/spi@48030000'
+        beaglebone_opc_spidevice_number = '0'
+
+        beaglebone_opc_kernelpath = beaglebone_opc_spibus + '/channel@' + beaglebone_opc_spidevice_number
+        opc_spidev = None
+
+        context = pyudev.Context()
+
+        for device in context.list_devices(subsystem='spidev'):
+            parent_node = device.parent
+            print("parent_node: %s" % parent_node)
+
+            if type(parent_node) is not None and 'OF_FULLNAME' in parent_node and \
+                    parent_node['OF_FULLNAME'] == beaglebone_opc_kernelpath:
+                opc_spidev = device.device_node
+
+        if opc_spidev:
+            print("To access the OPC, use:\n\n" + opc_spidev)
+        else:
+            print("OPC spidev not found")
+            sys.exit(1)
 
 
     # ----------------------------------------------------------------------------------------------------------------
