@@ -36,10 +36,10 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_LOCATION =    '48030000'                          # hard-coded memory-mapped io address
+    __OPC_SPI_ADDR =        '48030000'                          # hard-coded memory-mapped io address
     __OPC_SPI_DEVICE =      0                                   # hard-coded path
 
-    __NDIR_SPI_LOCATION =   '481a0000'                          # hard-coded memory-mapped io address
+    __NDIR_SPI_ADDR =       '481a0000'                          # hard-coded memory-mapped io address
     __NDIR_SPI_DEVICE =     0                                   # hard-coded path
 
     __GPS_DEVICE =          1                                   # hard-coded path
@@ -74,16 +74,22 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def spi_bus(spi_location, spi_device):
+    def spi_bus(spi_address, spi_device):
         context = pyudev.Context()
 
-        kernel_path = '/ocp/spi@' + spi_location + '/channel@' + str(spi_device)
+        kernel_path = '/ocp/spi@' + spi_address + '/channel@' + str(spi_device)
 
         for device in context.list_devices(subsystem='spidev'):
-            if device.parent['OF_FULLNAME'] == kernel_path:
+            parent = device.parent
+
+            if type(parent) and parent['OF_FULLNAME'] == kernel_path:
                 node = device.device_node
 
                 match = re.match('[^0-9]+([0-9]+).[0-9]+', node)            # e.g. /dev/spidev1.0
+
+                if match is None:
+                    continue
+
                 groups = match.groups()
 
                 return int(groups[0])
@@ -142,7 +148,7 @@ class Host(Node):
 
     @classmethod
     def ndir_spi_bus(cls):
-        return cls.spi_bus(cls.__NDIR_SPI_LOCATION, cls.__NDIR_SPI_DEVICE)
+        return cls.spi_bus(cls.__NDIR_SPI_ADDR, cls.__NDIR_SPI_DEVICE)
 
 
     @classmethod
@@ -152,7 +158,7 @@ class Host(Node):
 
     @classmethod
     def opc_spi_bus(cls):
-        return cls.spi_bus(cls.__OPC_SPI_LOCATION, cls.__OPC_SPI_DEVICE)
+        return cls.spi_bus(cls.__OPC_SPI_ADDR, cls.__OPC_SPI_DEVICE)
 
 
     @classmethod
