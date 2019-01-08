@@ -37,9 +37,11 @@ class Host(Node):
     # devices...
 
     __OPC_SPI_ADDR =        '48030000'                          # hard-coded memory-mapped io address
+    __OPC_SPI_BUS =         0                                   # based on Adafruit_BBIO.SPI - deprecated
     __OPC_SPI_DEVICE =      0                                   # hard-coded path
 
     __NDIR_SPI_ADDR =       '481a0000'                          # hard-coded memory-mapped io address
+    __NDIR_SPI_BUS =        1                                   # based on Adafruit_BBIO.SPI - deprecated
     __NDIR_SPI_DEVICE =     0                                   # hard-coded path
 
     __GPS_DEVICE =          1                                   # hard-coded path
@@ -148,7 +150,11 @@ class Host(Node):
 
     @classmethod
     def ndir_spi_bus(cls):
-        return cls.spi_bus(cls.__NDIR_SPI_ADDR, cls.__NDIR_SPI_DEVICE)
+        try:
+            return cls.spi_bus(cls.__NDIR_SPI_ADDR, cls.__NDIR_SPI_DEVICE)
+
+        except OSError:
+            return cls.__NDIR_SPI_BUS               # backwards-compatible with old Debian systems
 
 
     @classmethod
@@ -158,7 +164,11 @@ class Host(Node):
 
     @classmethod
     def opc_spi_bus(cls):
-        return cls.spi_bus(cls.__OPC_SPI_ADDR, cls.__OPC_SPI_DEVICE)
+        try:
+            return cls.spi_bus(cls.__OPC_SPI_ADDR, cls.__OPC_SPI_DEVICE)
+
+        except OSError:
+            return cls.__OPC_SPI_BUS               # backwards-compatible with old Debian systems
 
 
     @classmethod
