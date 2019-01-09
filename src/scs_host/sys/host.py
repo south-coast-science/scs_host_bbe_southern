@@ -17,6 +17,8 @@ from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.node import Node
 
 
+# TODO: remove __OPC_SPI_BUS, __NDIR_SPI_BUS
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class Host(Node):
