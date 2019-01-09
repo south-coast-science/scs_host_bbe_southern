@@ -37,11 +37,11 @@ class Host(Node):
     # devices...
 
     __OPC_SPI_ADDR =        '48030000'                          # hard-coded memory-mapped io address
-    __OPC_SPI_BUS =         1                                   # based on Adafruit_BBIO.SPI - deprecated
+    __OPC_SPI_BUS =         1                                   # hard-coded path - based on spidev
     __OPC_SPI_DEVICE =      0                                   # hard-coded path
 
     __NDIR_SPI_ADDR =       '481a0000'                          # hard-coded memory-mapped io address
-    __NDIR_SPI_BUS =        2                                   # based on Adafruit_BBIO.SPI - deprecated
+    __NDIR_SPI_BUS =        2                                   # hard-coded path - based on spidev
     __NDIR_SPI_DEVICE =     0                                   # hard-coded path
 
     __GPS_DEVICE =          1                                   # hard-coded path
