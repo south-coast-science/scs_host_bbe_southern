@@ -15,59 +15,59 @@ class WiFiStation(object):
 
     @classmethod
     def find_all(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def exists(cls, ssid):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def find_connected(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, ssid=None, encryption=None, quality=None, security=None, is_connected=None):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def ssid(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @property
     def encryption(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @property
     def quality(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @property
     def security(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @property
     def is_connected(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()

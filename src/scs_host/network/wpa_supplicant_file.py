@@ -17,45 +17,45 @@ class WPASupplicantFile(object):
 
     @classmethod
     def init(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def read(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, headers, supplicants):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     def write(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def insert(self, supplicant):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     def remove(self, ssid):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def headers(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @property
     def supplicants(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()

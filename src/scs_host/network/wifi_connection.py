@@ -16,14 +16,14 @@ class WiFiConnection(object):
 
     @classmethod
     def enable(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def disable(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def connect(cls, ssid):
-        raise NotImplementedError
+        raise NotImplementedError()

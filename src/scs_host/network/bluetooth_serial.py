@@ -17,32 +17,32 @@ class BluetoothSerial(object):
 
     @classmethod
     def monitor(cls, handler):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def stop(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, handler):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     def run(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __read(self, fd):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 

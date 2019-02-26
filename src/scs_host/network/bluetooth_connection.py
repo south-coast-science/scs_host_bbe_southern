@@ -24,26 +24,26 @@ class BluetoothConnection(object):
 
     @classmethod
     def enable(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     @classmethod
     def monitor(cls):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, pipe_input):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     def run(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError()
 
