@@ -85,7 +85,7 @@ class Host(Node):
             if type(parent) and parent['OF_FULLNAME'] == kernel_path:
                 node = device.device_node
 
-                match = re.match('\D+(\d+).\d+', node)              # e.g. /dev/spidev1.0
+                match = re.match(r'\D+(\d+).\d+', node)              # e.g. /dev/spidev1.0
 
                 if match is None:
                     continue
