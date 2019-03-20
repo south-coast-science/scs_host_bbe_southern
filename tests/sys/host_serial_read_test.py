@@ -19,7 +19,7 @@ try:
     print(serial)
 
     while True:
-        text = serial.read_line(HostSerial.EOL, 4.0)
+        text = serial.read_line(eol="\r\n", timeout=4.0)
         print("text:[%s]" % text)
 
 except KeyboardInterrupt:
