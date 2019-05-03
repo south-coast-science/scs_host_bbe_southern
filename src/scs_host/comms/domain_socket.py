@@ -115,4 +115,4 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-            return "DomainSocket:{address:%s, socket:%s}" % (self.address, self.__socket)
+        return "DomainSocket:{address:%s, socket:%s}" % (self.address, self.__socket)
