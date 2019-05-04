@@ -23,7 +23,7 @@ try:
         print("text:[%s]" % text)
 
 except KeyboardInterrupt:
-        print("host_serial_read_test: KeyboardInterrupt")
+    print("host_serial_read_test: KeyboardInterrupt")
 
 finally:
     serial.close()

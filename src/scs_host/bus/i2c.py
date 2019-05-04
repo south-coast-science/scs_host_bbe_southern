@@ -103,6 +103,9 @@ class I2C(object):
         if wait is not None:
             time.sleep(wait)
 
+        if count < 1:
+            return []
+
         return cls.read(count)
 
 
