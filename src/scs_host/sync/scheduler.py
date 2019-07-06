@@ -25,6 +25,8 @@ class Scheduler(object):
     classdocs
     """
 
+    DELAY_STEP =                    0.0     # (optional) delay between semaphores
+
     RELEASE_PERIOD =                0.3     # ScheduleItem release period
     HOLD_PERIOD =                   0.6     # ScheduleRunner hold period
 
@@ -44,13 +46,17 @@ class Scheduler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
+        delay = 0.0
+
         # prepare...
         for item in self.schedule.items:
-            target = SchedulerItem(item, self.verbose)
+            target = SchedulerItem(item, delay, self.verbose)
             job = multiprocessing.Process(name=item.name, target=target.run)
             job.daemon = True
 
             self.__jobs.append(job)
+
+            delay += self.DELAY_STEP
 
         # run...
         for job in self.__jobs:
@@ -93,12 +99,13 @@ class SchedulerItem(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, item, verbose=False):
+    def __init__(self, item, delay, verbose=False):
         """
         Constructor
         """
-        self.__item = item
-        self.__verbose = verbose
+        self.__item = item                                  # ScheduleItem
+        self.__delay = delay                                # float (seconds)
+        self.__verbose = verbose                            # bool
 
         self.__mutex = BinarySemaphore(self.item.name)
 
@@ -106,6 +113,11 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
+        try:
+            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
+        except BusyError:
+            pass
+
         timer = IntervalTimer(self.item.interval)
 
         while timer.true():
@@ -116,7 +128,7 @@ class SchedulerItem(object):
             # enable...
             self.__mutex.release()
 
-            time.sleep(Scheduler.RELEASE_PERIOD)        # release period: hand semaphore to sampler
+            time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
             try:
                 # disable...
@@ -129,12 +141,19 @@ class SchedulerItem(object):
                 print('%s: release' % self.item.name, file=sys.stderr)
                 sys.stderr.flush()
 
+            time.sleep(self.delay)
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def item(self):
         return self.__item
+
+
+    @property
+    def delay(self):
+        return self.__delay
 
 
     @property
@@ -145,4 +164,5 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SchedulerItem:{item:%s, verbose:%s, mutex:%s}" % (self.item, self.verbose, self.__mutex)
+        return "SchedulerItem:{item:%s, delay:%s, verbose:%s, mutex:%s}" % \
+               (self.item, self.delay, self.verbose, self.__mutex)
