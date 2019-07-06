@@ -34,11 +34,15 @@ class BinarySemaphore(object):
     def acquire(self, timeout=None):
         try:
             self.__semaphore.acquire(timeout)
+
         except posix_ipc.BusyError:
             raise BusyError()
 
+        except posix_ipc.SignalError:                   # on SIGTERM
+            pass
+
         while self.__semaphore.value > 0:
-            self.__semaphore.acquire()                    # limit the value to 0 or 1
+            self.__semaphore.acquire()                  # limit the value to 0 or 1
 
 
     def release(self):

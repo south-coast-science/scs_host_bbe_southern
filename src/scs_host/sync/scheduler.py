@@ -25,7 +25,7 @@ class Scheduler(object):
     classdocs
     """
 
-    DELAY_STEP =                    1.0     # (optional) delay between semaphores
+    DELAY_STEP =                    0.0     # (optional) delay between semaphores
 
     RELEASE_PERIOD =                0.3     # ScheduleItem release period
     HOLD_PERIOD =                   0.6     # ScheduleRunner hold period
@@ -103,9 +103,9 @@ class SchedulerItem(object):
         """
         Constructor
         """
-        self.__item = item                      # ScheduleItem
-        self.__delay = delay                    # float (seconds)
-        self.__verbose = verbose                # bool
+        self.__item = item                                  # ScheduleItem
+        self.__delay = delay                                # float (seconds)
+        self.__verbose = verbose                            # bool
 
         self.__mutex = BinarySemaphore(self.item.name)
 
@@ -113,11 +113,14 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
+        try:
+            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
+        except BusyError:
+            pass
+
         timer = IntervalTimer(self.item.interval)
 
         while timer.true():
-            time.sleep(self.delay)
-
             if self.verbose:
                 print('%s: run' % self.item.name, file=sys.stderr)
                 sys.stderr.flush()
@@ -125,11 +128,11 @@ class SchedulerItem(object):
             # enable...
             self.__mutex.release()
 
-            time.sleep(Scheduler.RELEASE_PERIOD)        # release period: hand semaphore to sampler
+            time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
             try:
                 # disable...
-                self.__mutex.acquire(self.item.interval)        # TODO: what happens if semaphore cannot be acquired?
+                self.__mutex.acquire(self.item.interval)
 
             except BusyError:
                 # release...
@@ -137,6 +140,8 @@ class SchedulerItem(object):
 
                 print('%s: release' % self.item.name, file=sys.stderr)
                 sys.stderr.flush()
+
+            time.sleep(self.delay)
 
 
     # ----------------------------------------------------------------------------------------------------------------
