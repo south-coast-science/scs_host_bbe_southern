@@ -118,7 +118,7 @@ class SchedulerItem(object):
 
     def run(self):
         try:
-            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
+            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
             pass
 
