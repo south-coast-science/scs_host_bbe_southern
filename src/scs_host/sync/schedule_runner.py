@@ -33,7 +33,7 @@ class ScheduleRunner(Runner):
         self.__name = name
         self.__verbose = verbose
 
-        self.__mutex = BinarySemaphore(self.name)
+        self.__mutex = BinarySemaphore(self.name, True)
 
 
     # ----------------------------------------------------------------------------------------------------------------
