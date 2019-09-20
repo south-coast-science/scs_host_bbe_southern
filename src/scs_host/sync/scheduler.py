@@ -111,14 +111,14 @@ class SchedulerItem(object):
         self.__delay = delay                                # float (seconds)
         self.__verbose = verbose                            # bool
 
-        self.__mutex = BinarySemaphore(self.item.name)
+        self.__mutex = BinarySemaphore(self.item.name, True)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
         try:
-            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
+            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
             pass
 

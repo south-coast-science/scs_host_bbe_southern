@@ -19,19 +19,29 @@ class BinarySemaphore(object):
     classdocs
     """
 
+    __INITIAL_ACQUISITION_TIME = 5.0                    # seconds
+
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, name):
+    def __init__(self, name, acquire_first):
         """
         Constructor
         """
         self.__name = name
         self.__semaphore = posix_ipc.Semaphore(self.name, flags=posix_ipc.O_CREAT)
 
+        if not acquire_first:
+            return
+
+        try:
+            self.__semaphore.acquire(self.__INITIAL_ACQUISITION_TIME)       # initial state: acquired by first creator
+        except (posix_ipc.BusyError, posix_ipc.SignalError):
+            pass
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def acquire(self, timeout=None):
+    def acquire(self, timeout=None):                    # None timeout = wait forever (dangerous)
         try:
             self.__semaphore.acquire(timeout)
 
