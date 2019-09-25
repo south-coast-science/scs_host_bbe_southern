@@ -87,8 +87,8 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
-            # job.set_state(True)
-            job.stop()
+            job.set_state(True)
+            # job.stop()
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -115,10 +115,6 @@ class SchedulerItem(SynchronisedProcess):
     classdocs
     """
 
-    RUNNING = True
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def __init__(self, item, delay, verbose=False):
         """
         Constructor
@@ -141,8 +137,6 @@ class SchedulerItem(SynchronisedProcess):
 
     def stop(self):
         try:
-            self.__running = False
-
             print('%s: stop' % self.item.name, file=sys.stderr)
             sys.stderr.flush()
             # super().stop()
@@ -164,13 +158,15 @@ class SchedulerItem(SynchronisedProcess):
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
-                # with self._lock:
-                #     state = copy.deepcopy(self._value[0])
+                with self._lock:
+                    running = copy.deepcopy(self._value[0])
 
-                print('run loop: %s' % self.__running, file=sys.stderr)
+                print('%s: run loop: %s' % (self.item.name, running), file=sys.stderr)
                 sys.stderr.flush()
 
-                if not self.__running:
+                if not running:
+                    print('%s: exiting run' % self.item.name, file=sys.stderr)
+                    sys.stderr.flush()
                     return
 
                 if self.verbose:
@@ -178,7 +174,7 @@ class SchedulerItem(SynchronisedProcess):
                     sys.stderr.flush()
 
                 # enable...
-                self.__mutex.release()
+                # self.__mutex.release()
 
                 time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
