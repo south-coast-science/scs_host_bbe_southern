@@ -123,7 +123,7 @@ class SchedulerItem(SynchronisedProcess):
 
         SynchronisedProcess.__init__(self, manager.list())
 
-        self._value.append(False)
+        self._value.append(True)
 
         self.__item = item                                  # ScheduleItem
         self.__delay = delay                                # float (seconds)
