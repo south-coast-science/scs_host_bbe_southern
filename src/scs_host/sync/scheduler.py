@@ -127,13 +127,13 @@ class SchedulerItem(SynchronisedProcess):
 
         SynchronisedProcess.__init__(self, manager.list())
 
+        self._value.append(False)
+
         self.__item = item                                  # ScheduleItem
         self.__delay = delay                                # float (seconds)
         self.__verbose = verbose                            # bool
 
         self.__mutex = BinarySemaphore(self.item.name, True)
-
-        self._value[0] = False
 
 
     # ----------------------------------------------------------------------------------------------------------------
