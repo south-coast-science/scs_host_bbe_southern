@@ -195,7 +195,7 @@ class SchedulerItem(SynchronisedProcess):
 
     def set_state(self, state):
         with self._lock:
-            self._value['terminate'] = state
+            self._value[0] = state
 
 
     # ----------------------------------------------------------------------------------------------------------------
