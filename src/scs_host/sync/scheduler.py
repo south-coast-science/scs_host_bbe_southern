@@ -12,9 +12,10 @@ https://pymotw.com/2/multiprocessing/basics.html
 import sys
 import time
 
-from multiprocessing import Process
+from multiprocessing import Manager
 
 from scs_core.sync.interval_timer import IntervalTimer
+from scs_core.sync.synchronised_process import SynchronisedProcess
 
 from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
 
@@ -46,15 +47,15 @@ class Scheduler(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def run(self):
+    def start(self):
         try:
             delay = 0.0
 
             # prepare...
             for item in self.schedule.items:
-                target = SchedulerItem(item, delay, self.verbose)
-                job = Process(name=item.name, target=target.run)
-                job.daemon = True
+                job = SchedulerItem(item, delay, self.verbose)
+                # job = Process(name=item.name, target=target.run)
+                # job.daemon = True
 
                 self.__jobs.append(job)
 
@@ -107,7 +108,7 @@ class Scheduler(object):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SchedulerItem(object):
+class SchedulerItem(SynchronisedProcess):
     """
     classdocs
     """
@@ -120,6 +121,10 @@ class SchedulerItem(object):
         """
         Constructor
         """
+        manager = Manager()
+
+        SynchronisedProcess.__init__(self, manager.list())
+
         self.__item = item                                  # ScheduleItem
         self.__delay = delay                                # float (seconds)
         self.__verbose = verbose                            # bool
