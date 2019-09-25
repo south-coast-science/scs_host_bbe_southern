@@ -14,6 +14,7 @@ import sys
 import time
 
 from scs_core.sync.interval_timer import IntervalTimer
+from scs_core.sys.signalled_exit import SignalledExit
 
 from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
 
@@ -53,7 +54,7 @@ class Scheduler(object):
             for item in self.schedule.items:
                 target = SchedulerItem(item, delay, self.verbose)
                 job = multiprocessing.Process(name=item.name, target=target.run)
-                job.daemon = True
+                # job.daemon = True
 
                 self.__jobs.append(job)
 
@@ -64,16 +65,23 @@ class Scheduler(object):
                 job.start()
 
             # wait...
-            if len(self.__jobs) > 0:
-                self.__jobs[0].join()
+            # if len(self.__jobs) > 0:
+            #     self.__jobs[0].join()
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
 
 
-    def terminate(self):
-        for job in self.__jobs:
-            job.terminate()
+    # def terminate(self):
+    #     print("attempting to terminate", file=sys.stderr)
+    #     sys.stderr.flush()
+    #
+    #     SchedulerItem.RUNNING = False
+        # for job in self.__jobs:
+        #     print("attempting to terminate %s" % job, file=sys.stderr)
+        #     sys.stderr.flush()
+
+            # job.terminate()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -101,6 +109,8 @@ class SchedulerItem(object):
     classdocs
     """
 
+    RUNNING = True
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, item, delay, verbose=False):
@@ -117,6 +127,9 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
+        # signal handler...
+        SignalledExit.construct("SchedulerItem:%s" % self.item.name, self.__verbose)
+
         try:
             self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
@@ -126,6 +139,9 @@ class SchedulerItem(object):
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
+                print('run loop: %s' % self.RUNNING, file=sys.stderr)
+                sys.stderr.flush()
+
                 if self.verbose:
                     print('%s: run' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
