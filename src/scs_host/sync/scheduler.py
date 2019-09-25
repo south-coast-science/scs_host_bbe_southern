@@ -142,11 +142,10 @@ class SchedulerItem(SynchronisedProcess):
     def stop(self):
         try:
             self.__running = False
-            self.__mutex.release()
 
             print('%s: stop' % self.item.name, file=sys.stderr)
             sys.stderr.flush()
-            super().stop()
+            # super().stop()
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
