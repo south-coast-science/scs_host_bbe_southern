@@ -134,6 +134,16 @@ class SchedulerItem(SynchronisedProcess):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def stop(self):
+        try:
+            print('%s: stop' % self.item.name, file=sys.stderr)
+            sys.stderr.flush()
+            super().stop()
+
+        except (BrokenPipeError, KeyboardInterrupt):
+            pass
+
+
     def run(self):
         try:
             self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
