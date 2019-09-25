@@ -9,7 +9,6 @@ http://semanchuk.com/philip/posix_ipc/#semaphore
 https://pymotw.com/2/multiprocessing/basics.html
 """
 
-import copy
 import sys
 import time
 
@@ -49,6 +48,9 @@ class Scheduler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def start(self):
+        print("Scheduler.start", file=sys.stderr)
+        sys.stderr.flush()
+
         try:
             delay = 0.0
 
@@ -74,24 +76,13 @@ class Scheduler(object):
             pass
 
 
-    # def terminate(self):
-    #     print("attempting to terminate", file=sys.stderr)
-    #     sys.stderr.flush()
-    #
-    #     SchedulerItem.RUNNING = False
-        # for job in self.__jobs:
-        #     print("attempting to terminate %s" % job, file=sys.stderr)
-        #     sys.stderr.flush()
-
-            # job.terminate()
-
     def stop(self):
-        for job in self.__jobs:
-            print('setting STOP: %s' % job, file=sys.stderr)
-            sys.stderr.flush()
+        print("Scheduler.stop", file=sys.stderr)
+        sys.stderr.flush()
 
-            job.set_running(False)
-            # job.stop()
+        for job in self.__jobs:
+            job.stop()
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -118,6 +109,8 @@ class SchedulerItem(SynchronisedProcess):
     classdocs
     """
 
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __init__(self, item, delay, verbose=False):
         """
         Constructor
@@ -136,21 +129,42 @@ class SchedulerItem(SynchronisedProcess):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # SynchronisedProcess implementation...
+
+    def start(self):
+        print("%s.start" % self.item.name, file=sys.stderr)
+        sys.stderr.flush()
+
+        try:
+            super().start()
+
+        except KeyboardInterrupt:
+            pass
+
 
     def stop(self):
+        print("%s.stop" % self.item.name, file=sys.stderr)
+        sys.stderr.flush()
+
         try:
-            print('%s: stop' % self.item.name, file=sys.stderr)
-            sys.stderr.flush()
-            # super().stop()
+            try:
+                self.__mutex.acquire(2.0)                   # attempt to re-capture the mutex
+            except BusyError:
+                pass
+
+            super().stop()
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
 
 
+
     def run(self):
+        print("%s.run" % self.item.name, file=sys.stderr)
+        sys.stderr.flush()
+
         try:
-            pass
-            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
+            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
         except BusyError:
             pass
 
@@ -158,52 +172,34 @@ class SchedulerItem(SynchronisedProcess):
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
-                with self._lock:
-                    running = copy.deepcopy(self._value[0])
-
-                print('%s: run loop: %s' % (self.item.name, running), file=sys.stderr)
-                sys.stderr.flush()
-
-                if not running:
-                    print('%s: exiting run' % self.item.name, file=sys.stderr)
-                    sys.stderr.flush()
-                    return
-
-                # if self.verbose:
-                #     print('%s: run' % self.item.name, file=sys.stderr)
-                #     sys.stderr.flush()
-
                 # enable...
                 self.__mutex.release()
-                print('%s: released' % self.item.name, file=sys.stderr)
-                sys.stderr.flush()
+
+                if self.verbose:
+                    print('%s.run: released' % self.item.name, file=sys.stderr)
+                    sys.stderr.flush()
 
                 time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
                 try:
                     # disable...
                     self.__mutex.acquire(self.item.interval)
-                    print('%s: acquired' % self.item.name, file=sys.stderr)
-                    sys.stderr.flush()
 
                 except BusyError:
                     # release...
                     self.__mutex.release()
-                    print('%s: released (busy)' % self.item.name, file=sys.stderr)
+
+                    print('%s.run: released on busy' % self.item.name, file=sys.stderr)
+                    sys.stderr.flush()
+
+                if self.verbose:
+                    print('%s.run: acquired' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
 
                 time.sleep(self.delay)
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # setter for client process...
-
-    def set_running(self, running):
-        with self._lock:
-            self._value[0] = running
 
 
     # ----------------------------------------------------------------------------------------------------------------
