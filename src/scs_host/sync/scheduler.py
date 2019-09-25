@@ -27,10 +27,10 @@ class Scheduler(object):
     classdocs
     """
 
-    DELAY_STEP =                    0.0     # (optional) delay between semaphores
+    DELAY_STEP =                    0.0         # (optional) delay between semaphores
 
-    RELEASE_PERIOD =                0.3     # ScheduleItem release period
-    HOLD_PERIOD =                   0.6     # ScheduleRunner hold period
+    RELEASE_PERIOD =                0.3         # ScheduleItem release period
+    HOLD_PERIOD =                   0.6         # ScheduleRunner hold period
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ class SchedulerItem(SynchronisedProcess):
         sys.stderr.flush()
 
         try:
-            self.__mutex.acquire(self.item.interval)        # protect against initially-released semaphores
+            self.__mutex.acquire(2.0)                           # protect against initially-released semaphores
         except BusyError:
             pass
 
@@ -185,15 +185,14 @@ class SchedulerItem(SynchronisedProcess):
                     # disable...
                     self.__mutex.acquire(self.item.interval)
 
+                    print('%s.run: acquired' % self.item.name, file=sys.stderr)
+                    sys.stderr.flush()
+
                 except BusyError:
                     # release...
                     self.__mutex.release()
 
                     print('%s.run: released on busy' % self.item.name, file=sys.stderr)
-                    sys.stderr.flush()
-
-                if self.verbose:
-                    print('%s.run: acquired' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
 
                 time.sleep(self.delay)
