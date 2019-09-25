@@ -87,6 +87,9 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
+            print('%s: setting STOP: %s' % job, file=sys.stderr)
+            sys.stderr.flush()
+
             job.set_running(False)
             # job.stop()
 
@@ -131,7 +134,6 @@ class SchedulerItem(SynchronisedProcess):
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
-        self.__running = True
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -146,8 +148,6 @@ class SchedulerItem(SynchronisedProcess):
 
 
     def run(self):
-        running = True
-
         try:
             pass
             self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
