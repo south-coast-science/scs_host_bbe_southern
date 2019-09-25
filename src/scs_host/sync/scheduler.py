@@ -9,12 +9,12 @@ http://semanchuk.com/philip/posix_ipc/#semaphore
 https://pymotw.com/2/multiprocessing/basics.html
 """
 
-import multiprocessing
 import sys
 import time
 
+from multiprocessing import Process
+
 from scs_core.sync.interval_timer import IntervalTimer
-from scs_core.sys.signalled_exit import SignalledExit
 
 from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
 
@@ -53,7 +53,7 @@ class Scheduler(object):
             # prepare...
             for item in self.schedule.items:
                 target = SchedulerItem(item, delay, self.verbose)
-                job = multiprocessing.Process(name=item.name, target=target.run)
+                job = Process(name=item.name, target=target.run)
                 job.daemon = True
 
                 self.__jobs.append(job)
@@ -83,6 +83,9 @@ class Scheduler(object):
 
             # job.terminate()
 
+    def stop(self):
+        for job in self.__jobs:
+            job.stop()
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -127,9 +130,6 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def run(self):
-        # signal handler...
-        SignalledExit.construct("SchedulerItem:%s" % self.item.name, self.__verbose)
-
         try:
             self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
