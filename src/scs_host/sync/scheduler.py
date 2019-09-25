@@ -9,6 +9,7 @@ http://semanchuk.com/philip/posix_ipc/#semaphore
 https://pymotw.com/2/multiprocessing/basics.html
 """
 
+import copy
 import sys
 import time
 
@@ -86,7 +87,8 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
-            job.stop()
+            job.set_state(True)
+            # job.stop()
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -131,6 +133,8 @@ class SchedulerItem(SynchronisedProcess):
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
+        self._value[0] = False
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -154,7 +158,10 @@ class SchedulerItem(SynchronisedProcess):
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
-                print('run loop: %s' % self.RUNNING, file=sys.stderr)
+                with self._lock:
+                    state = copy.deepcopy(self._value[0])
+
+                print('run loop: %s' % state, file=sys.stderr)
                 sys.stderr.flush()
 
                 if self.verbose:
@@ -181,6 +188,14 @@ class SchedulerItem(SynchronisedProcess):
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # setter for client process...
+
+    def set_state(self, state):
+        with self._lock:
+            self._value['terminate'] = state
 
 
     # ----------------------------------------------------------------------------------------------------------------
