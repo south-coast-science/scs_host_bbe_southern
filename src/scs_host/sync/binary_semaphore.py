@@ -49,7 +49,7 @@ class BinarySemaphore(object):
             raise BusyError()
 
         except posix_ipc.SignalError:                   # on SIGTERM
-            pass
+            return
 
         while self.__semaphore.value > 0:
             self.__semaphore.acquire()                  # limit the value to 0 or 1
