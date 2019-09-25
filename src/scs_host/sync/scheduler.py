@@ -87,7 +87,7 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
-            print('%s: setting STOP: %s' % job, file=sys.stderr)
+            print('setting STOP: %s' % job, file=sys.stderr)
             sys.stderr.flush()
 
             job.set_running(False)
@@ -169,26 +169,27 @@ class SchedulerItem(SynchronisedProcess):
                     sys.stderr.flush()
                     return
 
-                if self.verbose:
-                    print('%s: run' % self.item.name, file=sys.stderr)
-                    sys.stderr.flush()
+                # if self.verbose:
+                #     print('%s: run' % self.item.name, file=sys.stderr)
+                #     sys.stderr.flush()
 
                 # enable...
                 self.__mutex.release()
+                print('%s: released' % self.item.name, file=sys.stderr)
+                sys.stderr.flush()
 
                 time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
                 try:
                     # disable...
-                    pass
                     self.__mutex.acquire(self.item.interval)
+                    print('%s: acquired' % self.item.name, file=sys.stderr)
+                    sys.stderr.flush()
 
                 except BusyError:
                     # release...
-                    pass
                     self.__mutex.release()
-
-                    print('%s: release' % self.item.name, file=sys.stderr)
+                    print('%s: released (busy)' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
 
                 time.sleep(self.delay)
