@@ -150,7 +150,7 @@ class SchedulerItem(SynchronisedProcess):
 
         try:
             pass
-            # self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
+            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
             pass
 
@@ -174,19 +174,19 @@ class SchedulerItem(SynchronisedProcess):
                     sys.stderr.flush()
 
                 # enable...
-                # self.__mutex.release()
+                self.__mutex.release()
 
                 time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
 
                 try:
                     # disable...
                     pass
-                    # self.__mutex.acquire(self.item.interval)
+                    self.__mutex.acquire(self.item.interval)
 
                 except BusyError:
                     # release...
                     pass
-                    # self.__mutex.release()
+                    self.__mutex.release()
 
                     print('%s: release' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
