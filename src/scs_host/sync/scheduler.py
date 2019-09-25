@@ -87,8 +87,8 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
-            job.set_state(True)
-            # job.stop()
+            # job.set_state(True)
+            job.stop()
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -150,7 +150,8 @@ class SchedulerItem(SynchronisedProcess):
 
     def run(self):
         try:
-            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
+            pass
+            # self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
             pass
 
@@ -158,10 +159,10 @@ class SchedulerItem(SynchronisedProcess):
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
-                with self._lock:
-                    state = copy.deepcopy(self._value[0])
+                # with self._lock:
+                #     state = copy.deepcopy(self._value[0])
 
-                print('run loop: %s' % state, file=sys.stderr)
+                print('run loop: %s' % self.RUNNING, file=sys.stderr)
                 sys.stderr.flush()
 
                 if self.verbose:
@@ -175,11 +176,13 @@ class SchedulerItem(SynchronisedProcess):
 
                 try:
                     # disable...
-                    self.__mutex.acquire(self.item.interval)
+                    pass
+                    # self.__mutex.acquire(self.item.interval)
 
                 except BusyError:
                     # release...
-                    self.__mutex.release()
+                    pass
+                    # self.__mutex.release()
 
                     print('%s: release' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
