@@ -87,7 +87,7 @@ class Scheduler(object):
 
     def stop(self):
         for job in self.__jobs:
-            job.set_state(True)
+            job.set_running(False)
             # job.stop()
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ class SchedulerItem(SynchronisedProcess):
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
-        self.__running = None
+        self.__running = True
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ class SchedulerItem(SynchronisedProcess):
 
 
     def run(self):
-        self.__running = True
+        running = True
 
         try:
             pass
@@ -200,9 +200,9 @@ class SchedulerItem(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
     # setter for client process...
 
-    def set_state(self, state):
+    def set_running(self, running):
         with self._lock:
-            self._value[0] = state
+            self._value[0] = running
 
 
     # ----------------------------------------------------------------------------------------------------------------
