@@ -135,11 +135,14 @@ class SchedulerItem(SynchronisedProcess):
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
+        self.__running = None
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def stop(self):
         try:
+            self.__running = False
+
             print('%s: stop' % self.item.name, file=sys.stderr)
             sys.stderr.flush()
             super().stop()
@@ -149,6 +152,8 @@ class SchedulerItem(SynchronisedProcess):
 
 
     def run(self):
+        self.__running = True
+
         try:
             # pass
             self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
@@ -162,8 +167,11 @@ class SchedulerItem(SynchronisedProcess):
                 # with self._lock:
                 #     state = copy.deepcopy(self._value[0])
 
-                print('run loop: %s' % self.RUNNING, file=sys.stderr)
+                print('run loop: %s' % self.__running, file=sys.stderr)
                 sys.stderr.flush()
+
+                if not self.__running:
+                    return
 
                 if self.verbose:
                     print('%s: run' % self.item.name, file=sys.stderr)
