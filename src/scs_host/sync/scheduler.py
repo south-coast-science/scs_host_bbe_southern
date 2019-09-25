@@ -150,8 +150,8 @@ class SchedulerItem(SynchronisedProcess):
 
     def run(self):
         try:
-            pass
-            # self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
+            # pass
+            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
         except BusyError:
             pass
 
