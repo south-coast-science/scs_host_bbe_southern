@@ -54,7 +54,7 @@ class Scheduler(object):
             for item in self.schedule.items:
                 target = SchedulerItem(item, delay, self.verbose)
                 job = multiprocessing.Process(name=item.name, target=target.run)
-                # job.daemon = True
+                job.daemon = True
 
                 self.__jobs.append(job)
 
