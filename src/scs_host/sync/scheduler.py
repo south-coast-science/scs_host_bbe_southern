@@ -148,7 +148,7 @@ class SchedulerItem(SynchronisedProcess):
 
         try:
             try:
-                self.__mutex.acquire(2.0)                   # attempt to re-capture the mutex
+                self.__mutex.acquire(2.0)                       # attempt to re-capture the mutex
             except BusyError:
                 pass
 
@@ -162,11 +162,6 @@ class SchedulerItem(SynchronisedProcess):
     def run(self):
         print("%s.run" % self.item.name, file=sys.stderr)
         sys.stderr.flush()
-
-        try:
-            self.__mutex.acquire(2.0)                           # protect against initially-released semaphores
-        except BusyError:
-            pass
 
         try:
             timer = IntervalTimer(self.item.interval)
