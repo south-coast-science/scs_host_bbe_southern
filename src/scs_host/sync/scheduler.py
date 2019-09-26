@@ -9,13 +9,15 @@ http://semanchuk.com/philip/posix_ipc/#semaphore
 https://pymotw.com/2/multiprocessing/basics.html
 """
 
-import multiprocessing
 import sys
 import time
 
-from scs_core.sync.interval_timer import IntervalTimer
+from multiprocessing import Manager
 
-from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError
+from scs_core.sync.interval_timer import IntervalTimer
+from scs_core.sync.synchronised_process import SynchronisedProcess
+
+from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError, SignalError
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,10 +27,8 @@ class Scheduler(object):
     classdocs
     """
 
-    DELAY_STEP =                    0.0     # (optional) delay between semaphores
-
-    RELEASE_PERIOD =                0.3     # ScheduleItem release period
-    HOLD_PERIOD =                   0.6     # ScheduleRunner hold period
+    RELEASE_PERIOD =                0.3         # ScheduleItem release period
+    HOLD_PERIOD =                   0.6         # ScheduleRunner hold period
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -37,43 +37,29 @@ class Scheduler(object):
         """
         Constructor
         """
-        self.__schedule = schedule
-        self.__verbose = verbose
+        self.__schedule = schedule              # Schedule
+        self.__verbose = verbose                # bool
 
-        self.__jobs = []
+        self.__jobs = []                        # array of SchedulerItem
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def run(self):
+    def start(self):
         try:
-            delay = 0.0
-
-            # prepare...
             for item in self.schedule.items:
-                target = SchedulerItem(item, delay, self.verbose)
-                job = multiprocessing.Process(name=item.name, target=target.run)
-                job.daemon = True
+                job = SchedulerItem(item, self.verbose)
 
                 self.__jobs.append(job)
-
-                delay += self.DELAY_STEP
-
-            # run...
-            for job in self.__jobs:
                 job.start()
-
-            # wait...
-            if len(self.__jobs) > 0:
-                self.__jobs[0].join()
 
         except (BrokenPipeError, KeyboardInterrupt):
             pass
 
 
-    def terminate(self):
+    def stop(self):
         for job in self.__jobs:
-            job.terminate()
+            job.stop()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -96,59 +82,67 @@ class Scheduler(object):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SchedulerItem(object):
+class SchedulerItem(SynchronisedProcess):
     """
     classdocs
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, item, delay, verbose=False):
+    def __init__(self, item, verbose=False):
         """
         Constructor
         """
-        self.__item = item                                  # ScheduleItem
-        self.__delay = delay                                # float (seconds)
-        self.__verbose = verbose                            # bool
+        manager = Manager()
+
+        SynchronisedProcess.__init__(self, manager.list())
+
+        self._value.append(True)
+
+        self.__item = item                                      # ScheduleItem
+        self.__verbose = verbose                                # bool
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # SynchronisedProcess implementation...
 
-    def run(self):
+    def stop(self):
         try:
-            self.__mutex.acquire(self.item.interval)            # protect against initially-released semaphores
-        except BusyError:
+            try:
+                self.__mutex.acquire(self.item.interval)        # attempt to re-capture the mutex
+            except (BusyError, SignalError):
+                pass
+
+            super().stop()
+
+        except (BrokenPipeError, KeyboardInterrupt):
             pass
 
+
+    def run(self):
         try:
             timer = IntervalTimer(self.item.interval)
 
             while timer.true():
-                if self.verbose:
-                    print('%s: run' % self.item.name, file=sys.stderr)
-                    sys.stderr.flush()
-
-                # enable...
+                # enable sampler...
                 self.__mutex.release()
 
-                time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
+                time.sleep(Scheduler.RELEASE_PERIOD)                # release period: hand semaphore to sampler
 
                 try:
-                    # disable...
+                    # disable sampler...
                     self.__mutex.acquire(self.item.interval)
 
                 except BusyError:
                     # release...
                     self.__mutex.release()
 
-                    print('%s: release' % self.item.name, file=sys.stderr)
+                    print('%s.run: released on busy' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
 
-                time.sleep(self.delay)
-
-        except (BrokenPipeError, KeyboardInterrupt):
+        except (BrokenPipeError, KeyboardInterrupt, SignalError):
             pass
 
 
@@ -160,11 +154,6 @@ class SchedulerItem(object):
 
 
     @property
-    def delay(self):
-        return self.__delay
-
-
-    @property
     def verbose(self):
         return self.__verbose
 
@@ -172,5 +161,4 @@ class SchedulerItem(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "SchedulerItem:{item:%s, delay:%s, verbose:%s, mutex:%s}" % \
-               (self.item, self.delay, self.verbose, self.__mutex)
+        return "SchedulerItem:{item:%s, verbose:%s, mutex:%s}" % (self.item, self.verbose, self.__mutex)
