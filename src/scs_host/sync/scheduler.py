@@ -99,8 +99,8 @@ class SchedulerItem(SynchronisedProcess):
 
         self._value.append(True)
 
-        self.__item = item                                  # ScheduleItem
-        self.__verbose = verbose                            # bool
+        self.__item = item                                      # ScheduleItem
+        self.__verbose = verbose                                # bool
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
@@ -111,7 +111,7 @@ class SchedulerItem(SynchronisedProcess):
     def stop(self):
         try:
             try:
-                self.__mutex.acquire(self.item.interval)            # attempt to re-capture the mutex
+                self.__mutex.acquire(self.item.interval)        # attempt to re-capture the mutex
             except (BusyError, SignalError):
                 pass
 
