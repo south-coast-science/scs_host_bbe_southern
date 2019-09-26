@@ -8,6 +8,8 @@ Created on 28 Jun 2017
 https://pymotw.com/2/multiprocessing/basics.html
 """
 
+import time
+
 from collections import OrderedDict
 
 from scs_core.sync.schedule import Schedule
@@ -43,7 +45,10 @@ print(heartbeat)
 print("-")
 
 try:
-    heartbeat.run()
+    heartbeat.start()
+
+    while True:
+        time.sleep(1.0)
 
 except KeyboardInterrupt:
     pass
