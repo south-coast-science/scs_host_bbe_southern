@@ -46,9 +46,6 @@ class Scheduler(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def start(self):
-        # print("Scheduler.start", file=sys.stderr)
-        # sys.stderr.flush()
-
         try:
             for item in self.schedule.items:
                 job = SchedulerItem(item, self.verbose)
@@ -61,9 +58,6 @@ class Scheduler(object):
 
 
     def stop(self):
-        # print("Scheduler.stop", file=sys.stderr)
-        # sys.stderr.flush()
-
         for job in self.__jobs:
             job.stop()
 
@@ -114,21 +108,7 @@ class SchedulerItem(SynchronisedProcess):
     # ----------------------------------------------------------------------------------------------------------------
     # SynchronisedProcess implementation...
 
-    def start(self):
-        # print("%s.start" % self.item.name, file=sys.stderr)
-        # sys.stderr.flush()
-
-        try:
-            super().start()
-
-        except KeyboardInterrupt:
-            pass
-
-
     def stop(self):
-        # print("%s.stop" % self.item.name, file=sys.stderr)
-        # sys.stderr.flush()
-
         try:
             try:
                 self.__mutex.acquire(self.item.interval)            # attempt to re-capture the mutex
@@ -142,9 +122,6 @@ class SchedulerItem(SynchronisedProcess):
 
 
     def run(self):
-        # print("%s.run" % self.item.name, file=sys.stderr)
-        # sys.stderr.flush()
-
         try:
             timer = IntervalTimer(self.item.interval)
 
@@ -152,17 +129,11 @@ class SchedulerItem(SynchronisedProcess):
                 # enable sampler...
                 self.__mutex.release()
 
-                # print('%s.run: released' % self.item.name, file=sys.stderr)
-                # sys.stderr.flush()
-
-                time.sleep(Scheduler.RELEASE_PERIOD)            # release period: hand semaphore to sampler
+                time.sleep(Scheduler.RELEASE_PERIOD)                # release period: hand semaphore to sampler
 
                 try:
                     # disable sampler...
                     self.__mutex.acquire(self.item.interval)
-
-                    # print('%s.run: acquired' % self.item.name, file=sys.stderr)
-                    # sys.stderr.flush()
 
                 except BusyError:
                     # release...
