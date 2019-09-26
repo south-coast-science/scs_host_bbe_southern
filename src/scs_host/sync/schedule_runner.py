@@ -8,12 +8,11 @@ Warning: only one sampler per semaphore!
 http://semanchuk.com/philip/posix_ipc/#semaphore
 """
 
-import sys
 import time
 
 from scs_core.sync.runner import Runner
 
-from scs_host.sync.binary_semaphore import BinarySemaphore
+from scs_host.sync.binary_semaphore import BinarySemaphore, SignalError
 from scs_host.sync.scheduler import Scheduler
 
 
@@ -24,41 +23,42 @@ class ScheduleRunner(Runner):
     classdocs
     """
 
+    __MIN_ACQUISITION_TIME =  0.4               # seconds
+
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, name, verbose=False):
+    def __init__(self, name):
         """
         Constructor
         """
-        self.__name = name
-        self.__verbose = verbose
-
-        self.__mutex = BinarySemaphore(self.name, True)
+        self.__mutex = BinarySemaphore(name, False)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def samples(self, sampler):
+        checkpoint = time.time()
+
         while True:
             try:
-                # start...
                 self.__mutex.acquire()
 
-                if self.verbose:
-                    print('%s: start' % self.name, file=sys.stderr)
-                    sys.stderr.flush()
+                # if acquisition too fast there is no scheduler!
+                if time.time() - checkpoint > self.__MIN_ACQUISITION_TIME:
+                    yield sampler.sample()
 
-                yield sampler.sample()
+                else:
+                    time.sleep(1.0)
+
+            except SignalError:                     # SIGTERM received
+                return
 
             finally:
                 # done...
                 self.__mutex.release()
 
-                if self.verbose:
-                    print('%s: done' % self.name, file=sys.stderr)
-                    sys.stderr.flush()
-
                 time.sleep(Scheduler.HOLD_PERIOD)
+                checkpoint = time.time()
 
 
     def reset(self):
@@ -69,15 +69,10 @@ class ScheduleRunner(Runner):
 
     @property
     def name(self):
-        return self.__name
-
-
-    @property
-    def verbose(self):
-        return self.__verbose
+        return self.__mutex.name
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "ScheduleRunner:{name:%s, verbose:%s, mutex:%s}" % (self.name, self.verbose, self.__mutex)
+        return "ScheduleRunner:{mutex:%s}" % self.__mutex
