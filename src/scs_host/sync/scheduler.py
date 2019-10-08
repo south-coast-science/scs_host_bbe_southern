@@ -53,7 +53,7 @@ class Scheduler(object):
                 self.__jobs.append(job)
                 job.start()
 
-        except (BrokenPipeError, KeyboardInterrupt):
+        except (BrokenPipeError, KeyboardInterrupt, SystemExit):
             pass
 
 
@@ -117,7 +117,7 @@ class SchedulerItem(SynchronisedProcess):
 
             super().stop()
 
-        except (BrokenPipeError, KeyboardInterrupt):
+        except (BrokenPipeError, KeyboardInterrupt, SystemExit):
             pass
 
 
@@ -142,7 +142,7 @@ class SchedulerItem(SynchronisedProcess):
                     print('%s.run: released on busy' % self.item.name, file=sys.stderr)
                     sys.stderr.flush()
 
-        except (BrokenPipeError, KeyboardInterrupt, SignalError):
+        except (BrokenPipeError, KeyboardInterrupt, SignalError, SystemExit):
             pass
 
 
