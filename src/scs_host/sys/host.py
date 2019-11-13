@@ -13,6 +13,8 @@ import re
 import socket
 import subprocess
 
+from pathlib import Path
+
 from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.node import Node
 
@@ -47,6 +49,12 @@ class Host(Node):
     __NDIR_USB_DEVICE =     '/dev/ttyUSB0'                      # hard-coded path (Alphasense USB device)
 
     __PSU_DEVICE =          5                                   # hard-coded path
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # time marker...
+
+    __TIME_SYNCHRONIZED =  "/run/systemd/timesync/synchronized"
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -164,6 +172,13 @@ class Host(Node):
     @classmethod
     def opc_spi_device(cls):
         return cls.__OPC_SPI_DEVICE
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def time_is_synchronized(cls):
+        return Path(cls.__TIME_SYNCHRONIZED).exists()               # TODO: test whether this works with an RTC
 
 
     # ----------------------------------------------------------------------------------------------------------------
