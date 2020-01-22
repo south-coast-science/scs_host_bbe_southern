@@ -41,30 +41,33 @@ class Scheduler(object):
         self.__verbose = verbose                # bool
 
         self.__jobs = []                        # array of SchedulerItem
+        self.__proc = None                      # process
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def start(self):
-        proc = None
-
         try:
             for item in self.schedule.items:
                 job = SchedulerItem(item, self.verbose)
 
                 self.__jobs.append(job)
-                proc = job.start()
+                self.__proc = job.start()
 
         except (BrokenPipeError, KeyboardInterrupt, SystemExit):
             pass
-
-        finally:
-            return proc                         # return the last job process, or None
 
 
     def stop(self):
         for job in self.__jobs:
             job.stop()
+
+
+    def join(self):
+        if self.__proc is None:
+            return
+
+        self.__proc.join()
 
 
     # ----------------------------------------------------------------------------------------------------------------
