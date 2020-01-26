@@ -62,6 +62,11 @@ class Scheduler(object):
             job.stop()
 
 
+    def join(self):
+        for job in self.__jobs:
+            job.join()
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
