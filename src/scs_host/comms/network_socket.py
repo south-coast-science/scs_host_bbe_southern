@@ -102,9 +102,9 @@ class NetworkSocket(ProcessComms):
 
                 break
 
-            except BrokenPipeError as ex:
+            except ConnectionError:
                 if not wait_for_availability:
-                    raise ConnectionRefusedError(ex)
+                    raise
 
                 self.close()
 
