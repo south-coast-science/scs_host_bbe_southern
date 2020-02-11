@@ -8,7 +8,7 @@ Created on 28 Jun 2017
 
 import sys
 
-from scs_core.data.localized_datetime import LocalizedDatetime
+from scs_core.data.datetime import LocalizedDatetime
 
 from scs_core.sampler.sampler import Sampler
 
