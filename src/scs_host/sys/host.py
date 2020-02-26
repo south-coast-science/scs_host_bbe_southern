@@ -58,7 +58,7 @@ class Host(Node):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # directories...
+    # directories and files...
 
     __DEFAULT_HOME_DIR =    '/home/scs'                         # hard-coded abs path
     __LOCK_DIR =            '/run/lock/southcoastscience'       # hard-coded abs path
@@ -70,6 +70,8 @@ class Host(Node):
     __CONF_DIR =            'conf'                              # hard-coded rel path
     __AWS_DIR =             'aws'                               # hard-coded rel path
     __OSIO_DIR =            'osio'                              # hard-coded rel path
+
+    __LATEST_UPDATE =       "latest_update.txt"                 # hard-coded rel path
     __DFE_EEP_IMAGE =       'dfe_cape.eep'                      # hard-coded rel path
 
 
@@ -128,6 +130,19 @@ class Host(Node):
     @classmethod
     def shutdown(cls):
         subprocess.call([cls.__SHUTDOWN_CMD, 'now'])
+
+
+    @classmethod
+    def software_update_report(cls):
+        try:
+            f = open(os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__LATEST_UPDATE))
+            report = f.read().strip()
+            f.close()
+
+            return report
+
+        except FileNotFoundError:
+            return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
