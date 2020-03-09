@@ -16,6 +16,7 @@ import subprocess
 from pathlib import Path
 
 from scs_core.sys.disk_usage import DiskUsage
+from scs_core.sys.ipv4_address import IPv4Address
 from scs_core.sys.node import Node
 
 
@@ -79,6 +80,12 @@ class Host(Node):
     # commands...
 
     __SHUTDOWN_CMD =        '/sbin/shutdown'                    # hard-coded path
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # host acting as DHCP server...
+
+    __SERVER_IPV4_ADDRESS = None                                # had-coded abs path
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -168,6 +175,13 @@ class Host(Node):
     def name(cls):
         return socket.gethostname()
 
+
+    @classmethod
+    def server_ipv4_address(cls):
+        return IPv4Address.construct(cls.__SERVER_IPV4_ADDRESS)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
     def ndir_spi_bus(cls):
