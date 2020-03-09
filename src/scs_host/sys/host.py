@@ -82,6 +82,12 @@ class Host(Node):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+    # host acting as DHCP server...
+
+    __SERVER_ADDRESS =      None                                # had-coded abs path
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
     def spi_bus(spi_address, spi_device):
@@ -167,6 +173,11 @@ class Host(Node):
     @classmethod
     def name(cls):
         return socket.gethostname()
+
+
+    @classmethod
+    def server_ip_address(cls):
+        return cls.__SERVER_ADDRESS
 
 
     @classmethod
