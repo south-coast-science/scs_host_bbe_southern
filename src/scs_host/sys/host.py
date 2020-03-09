@@ -16,6 +16,7 @@ import subprocess
 from pathlib import Path
 
 from scs_core.sys.disk_usage import DiskUsage
+from scs_core.sys.ipv4_address import IPv4Address
 from scs_core.sys.node import Node
 
 
@@ -176,9 +177,11 @@ class Host(Node):
 
 
     @classmethod
-    def server_ip_address(cls):
-        return cls.__SERVER_ADDRESS
+    def server_ipv4_address(cls):
+        return IPv4Address.construct(cls.__SERVER_ADDRESS)
 
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
     def ndir_spi_bus(cls):
