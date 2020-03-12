@@ -3,4 +3,3 @@ paho-mqtt
 posix_ipc
 pyudev
 spidev
-Adafruit_BBIO
