@@ -1,5 +1,5 @@
-serial
 paho-mqtt
 posix_ipc
 pyudev
 spidev
+pyserial
