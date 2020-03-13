@@ -1,7 +1,5 @@
-scs_core==0.1.9
-serial
 paho-mqtt
 posix_ipc
 pyudev
 spidev
-Adafruit_BBIO
+pyserial
