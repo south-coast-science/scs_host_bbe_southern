@@ -2,6 +2,8 @@
 Created on 9 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+
+if wait_for_network is False, then a ConnectionError should be handled
 """
 
 import socket
@@ -31,10 +33,10 @@ class HTTPClient(object):
         """
         Constructor
         """
+        self.__wait_for_network = wait_for_network
+
         self.__conn = None
         self.__host = None
-
-        self.__wait_for_network = wait_for_network
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -130,9 +132,9 @@ class HTTPClient(object):
                 self.__conn.request(method, url, body=body, headers=headers)
                 return self.__conn.getresponse()
 
-            except (socket.gaierror, http.client.CannotSendRequest):
+            except (socket.gaierror, http.client.CannotSendRequest) as ex:
                 if not self.__wait_for_network:
-                    raise
+                    raise ConnectionError(ex)
 
                 time.sleep(self.__NETWORK_WAIT_TIME)
 
