@@ -6,7 +6,7 @@ Created on 9 Nov 2016
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 """
 
-from scs_host.client.http_client import HTTPClient
+from scs_core.client.http_client import HTTPClient
 
 
 # --------------------------------------------------------------------------------------------------------------------
