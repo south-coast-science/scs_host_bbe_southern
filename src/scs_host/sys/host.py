@@ -207,7 +207,7 @@ class Host(Node):
 
     @classmethod
     def time_is_synchronized(cls):
-        return Path(cls.__TIME_SYNCHRONIZED).exists()               # TODO: test whether this works with an RTC
+        return Path(cls.__TIME_SYNCHRONIZED).exists()
 
 
     # ----------------------------------------------------------------------------------------------------------------
