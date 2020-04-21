@@ -28,7 +28,7 @@ class Interface(JSONable):
               inet6 addr: fe80::26fa:583e:7d87:e803/64 Scope:Link
     """
 
-    WIFI = "wlan0"          # TODO: needs to be in a file or something
+    WIFI = "wlan0"          # TODO: needs to be in Host
 
 
     # ----------------------------------------------------------------------------------------------------------------
