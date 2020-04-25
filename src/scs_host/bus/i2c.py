@@ -67,7 +67,7 @@ class I2C(object):
         if cls.__FR is None or cls.__FW is None:
             raise RuntimeError("I2C.start_tx: bus is not open.")
 
-        Lock.acquire(I2C.__name__, I2C.__LOCK_TIMEOUT)
+        Lock.acquire(cls.__name__, I2C.__LOCK_TIMEOUT)
 
         fcntl.ioctl(cls.__FR, I2C.__I2C_SLAVE, device)
         fcntl.ioctl(cls.__FW, I2C.__I2C_SLAVE, device)
@@ -75,7 +75,7 @@ class I2C(object):
 
     @classmethod
     def end_tx(cls):
-        Lock.release(I2C.__name__)
+        Lock.release(cls.__name__)
 
 
     # ----------------------------------------------------------------------------------------------------------------
