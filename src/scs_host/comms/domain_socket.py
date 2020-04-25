@@ -12,7 +12,7 @@ https://pymotw.com/2/socket/uds.html
 
 import os
 import socket
-import sys
+# import sys
 import time
 
 from scs_core.sys.process_comms import ProcessComms
@@ -60,18 +60,20 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     def connect(self, wait_for_availability=True):
-        while True:
-            try:
-                self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-            except ConnectionRefusedError as ex:
-                if not wait_for_availability:
-                    raise ex
-
-                print("*** DomainSocket.connect: waiting for availability.", file=sys.stderr)
-                sys.stderr.flush()
-
-                time.sleep(self.__WAIT_FOR_AVAILABILITY)
+        # while True:
+        #     try:
+        #         self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        #
+        #     except ConnectionRefusedError as ex:
+        #         if not wait_for_availability:
+        #             raise ex
+        #
+        #         print("*** DomainSocket.connect: waiting for availability.", file=sys.stderr)
+        #         sys.stderr.flush()
+        #
+        #         time.sleep(self.__WAIT_FOR_AVAILABILITY)
 
 
     def close(self):
