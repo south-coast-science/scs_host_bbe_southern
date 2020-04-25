@@ -12,7 +12,7 @@ https://pymotw.com/2/socket/uds.html
 
 import os
 import socket
-import sys
+# import sys
 import time
 
 from scs_core.sys.process_comms import ProcessComms
