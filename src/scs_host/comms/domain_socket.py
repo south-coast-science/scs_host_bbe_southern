@@ -29,7 +29,6 @@ class DomainSocket(ProcessComms):
     __BUFFER_SIZE = 1024
 
     __WAIT_FOR_AVAILABILITY =   10.0        # seconds
-    __SYSTEM_WAIT_TIME =        10.0        # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -61,20 +60,18 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     def connect(self, wait_for_availability=True):
-        self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        while True:
+            try:
+                self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-        # while True:
-        #     try:
-        #         self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        #
-        #     except ConnectionRefusedError as ex:
-        #         if not wait_for_availability:
-        #             raise ex
-        #
-        #         print("*** DomainSocket.connect: waiting for availability.", file=sys.stderr)
-        #         sys.stderr.flush()
-        #
-        #         time.sleep(self.__WAIT_FOR_AVAILABILITY)
+            except ConnectionRefusedError as ex:
+                if not wait_for_availability:
+                    raise ex
+
+                print("DomainSocket.connect: %s" % ex, file=sys.stderr)
+                sys.stderr.flush()
+
+                time.sleep(self.__WAIT_FOR_AVAILABILITY)
 
 
     def close(self):
@@ -112,13 +109,13 @@ class DomainSocket(ProcessComms):
                 break
 
             except (socket.error, FileNotFoundError) as ex:
-                print("DomainSocket.__request: %s" % ex, file=sys.stderr)
+                print("DomainSocket.write: %s" % ex, file=sys.stderr)
                 sys.stderr.flush()
 
                 if not wait_for_availability:
                     raise ex
 
-                time.sleep(self.__SYSTEM_WAIT_TIME)
+                time.sleep(self.__WAIT_FOR_AVAILABILITY)
 
         # data...
         self.__socket.sendall(message.strip().encode())
