@@ -12,7 +12,7 @@ https://pymotw.com/2/socket/uds.html
 
 import os
 import socket
-# import sys
+import sys
 import time
 
 from scs_core.sys.process_comms import ProcessComms
@@ -28,7 +28,8 @@ class DomainSocket(ProcessComms):
     __BACKLOG = 1          # number of unaccepted connections the system will allow before refusing new connections
     __BUFFER_SIZE = 1024
 
-    __WAIT_FOR_AVAILABILITY = 10.0      # seconds
+    __WAIT_FOR_AVAILABILITY =   10.0        # seconds
+    __SYSTEM_WAIT_TIME =        10.0        # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -111,10 +112,13 @@ class DomainSocket(ProcessComms):
                 break
 
             except (socket.error, FileNotFoundError) as ex:
-                if not wait_for_availability:
-                    raise ConnectionRefusedError(ex)
+                print("DomainSocket.__request: %s" % ex, file=sys.stderr)
+                sys.stderr.flush()
 
-                time.sleep(0.1)
+                if not wait_for_availability:
+                    raise ex
+
+                time.sleep(self.__SYSTEM_WAIT_TIME)
 
         # data...
         self.__socket.sendall(message.strip().encode())
