@@ -60,20 +60,19 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     def connect(self, wait_for_availability=True):
-        self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        while True:
+            try:
+                self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                return
 
-        # while True:
-        #     try:
-        #         self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        #
-        #     except ConnectionRefusedError as ex:
-        #         if not wait_for_availability:
-        #             raise ex
-        #
-        #         print("DomainSocket.connect: %s" % ex, file=sys.stderr)
-        #         sys.stderr.flush()
-        #
-        #         time.sleep(self.__WAIT_FOR_AVAILABILITY)
+            except ConnectionRefusedError as ex:
+                if not wait_for_availability:
+                    raise ex
+
+                print("DomainSocket.connect: waiting for availability.", file=sys.stderr)
+                sys.stderr.flush()
+
+                time.sleep(self.__WAIT_FOR_AVAILABILITY)
 
 
     def close(self):
