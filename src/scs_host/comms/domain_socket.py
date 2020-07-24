@@ -31,7 +31,7 @@ class DomainSocket(ProcessComms):
     __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
 
-    __WAIT_FOR_AVAILABILITY =   60.0        # seconds
+    __WAIT_FOR_AVAILABILITY =   120.0       # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -52,11 +52,13 @@ class DomainSocket(ProcessComms):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, path):
+    def __init__(self, path, logger=None):
         """
         Constructor
         """
         self.__path = path                  # string
+        self.__logger = logger              # Logger (for compatibility only)
+
         self.__socket = None                # socket.socket
 
 
