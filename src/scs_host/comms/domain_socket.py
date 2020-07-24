@@ -8,6 +8,7 @@ A Unix domain socket abstraction, implementing ProcessComms
 Only one reader per UDS!
 
 https://pymotw.com/2/socket/uds.html
+https://stackoverflow.com/questions/46301706/bjoern-wsgi-server-unix-socket-permissions
 """
 
 import os
@@ -25,10 +26,12 @@ class DomainSocket(ProcessComms):
     classdocs
     """
 
-    __BACKLOG = 1          # number of unaccepted connections the system will allow before refusing new connections
+    __PERMISSIONS = 0o666                   # srwxrw-rw-
+
+    __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
 
-    __WAIT_FOR_AVAILABILITY =   10.0        # seconds
+    __WAIT_FOR_AVAILABILITY =   60.0        # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -49,11 +52,11 @@ class DomainSocket(ProcessComms):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address):
+    def __init__(self, path):
         """
         Constructor
         """
-        self.__address = address            # string
+        self.__path = path                  # string
         self.__socket = None                # socket.socket
 
 
@@ -84,8 +87,10 @@ class DomainSocket(ProcessComms):
 
     def read(self):                                             # blocking
         # socket...
-        self.__socket.bind(self.__address)
+        self.__socket.bind(self.__path)
         self.__socket.listen(DomainSocket.__BACKLOG)
+
+        os.chmod(self.__path, self.__PERMISSIONS)
 
         try:
             while True:
@@ -99,14 +104,14 @@ class DomainSocket(ProcessComms):
                     connection.close()
 
         finally:
-            os.unlink(self.__address)
+            os.unlink(self.__path)
 
 
     def write(self, message, wait_for_availability=True):       # message is dispatched on close()
         # socket...
         while True:
             try:
-                self.__socket.connect(self.__address)
+                self.__socket.connect(self.__path)
                 break
 
             except (socket.error, FileNotFoundError) as ex:
@@ -125,11 +130,11 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self.__address
+    def path(self):
+        return self.__path
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "DomainSocket:{address:%s, socket:%s}" % (self.address, self.__socket)
+        return "DomainSocket:{path:%s, socket:%s}" % (self.path, self.__socket)
