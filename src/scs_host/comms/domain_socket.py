@@ -31,7 +31,7 @@ class DomainSocket(ProcessComms):
     __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
 
-    __WAIT_FOR_AVAILABILITY =   120.0       # seconds
+    __WAIT_FOR_AVAILABILITY =   10.0        # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
