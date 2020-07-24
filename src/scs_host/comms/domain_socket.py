@@ -52,11 +52,13 @@ class DomainSocket(ProcessComms):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, path):
+    def __init__(self, path, logger=None):
         """
         Constructor
         """
         self.__path = path                  # string
+        self.__logger = logger              # Logger
+
         self.__socket = None                # socket.socket
 
 
