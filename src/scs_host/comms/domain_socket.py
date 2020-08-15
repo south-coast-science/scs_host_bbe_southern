@@ -25,6 +25,7 @@ class DomainSocket(ProcessComms):
 
     EOM = '\n'                              # end of message for client-server communications
 
+    __PERMISSIONS = 0o666                   # srw-rw-rw-
     __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
 
@@ -67,6 +68,8 @@ class DomainSocket(ProcessComms):
     def accept(self):
         self.__socket.bind(self.path)
         self.__socket.listen(self.__BACKLOG)
+
+        os.chmod(self.path, self.__PERMISSIONS)
 
         self.__conn, _ = self.__socket.accept()
 
@@ -122,7 +125,9 @@ class DomainSocket(ProcessComms):
     def read(self):                                             # blocking
         # socket...
         self.__socket.bind(self.path)
-        self.__socket.listen(DomainSocket.__BACKLOG)
+        self.__socket.listen(self.__BACKLOG)
+
+        os.chmod(self.path, self.__PERMISSIONS)
 
         try:
             while True:
@@ -166,4 +171,4 @@ class DomainSocket(ProcessComms):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "DomainSocket:{path:%s, socket:%s}" % (self.path, self.__socket)
+        return "bbe_southern.DomainSocket:{path:%s, socket:%s}" % (self.path, self.__socket)
