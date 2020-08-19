@@ -29,6 +29,8 @@ class DomainSocket(ProcessComms):
     __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
 
+    __WAIT_FOR_AVAILABILITY = 1.0           # seconds
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
@@ -155,7 +157,7 @@ class DomainSocket(ProcessComms):
                 if not wait_for_availability:
                     raise ConnectionRefusedError(ex)
 
-                time.sleep(0.1)         # TODO: set this to something better
+                time.sleep(self.__WAIT_FOR_AVAILABILITY)
 
         # data...
         self.__socket.sendall(message.strip().encode())
