@@ -28,7 +28,6 @@ class DomainSocket(ProcessComms):
     __PERMISSIONS = 0o666                   # srw-rw-rw-
     __BACKLOG = 1                           # number of unaccepted connections before refusing new connections
     __BUFFER_SIZE = 1024
-
     __WAIT_FOR_AVAILABILITY = 1.0           # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,7 +84,7 @@ class DomainSocket(ProcessComms):
     # client-server API...
 
     def server_send(self, message):
-        self.__conn.send((message + self.EOM).encode())
+        self.__send(self.__conn, message)
 
 
     def client_send(self, message):
@@ -94,7 +93,7 @@ class DomainSocket(ProcessComms):
         except OSError:
             pass                    # assume that the socket is already connected
 
-        self.__socket.send((message + self.EOM).encode())
+        self.__send(self.__socket, message)
 
 
     def server_receive(self):
@@ -106,6 +105,10 @@ class DomainSocket(ProcessComms):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    def __send(self, channel, message):
+        channel.send((message + self.EOM).encode())
+
 
     def __receive(self, channel):
         message = ''
