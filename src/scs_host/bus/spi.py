@@ -79,9 +79,7 @@ class SPI(object):
 
     @property
     def __lock_name(self):
-        bus = self.__bus
-
-        return self.__class__.__name__ + str(bus)
+        return "%s%s" % (self.__class__.__name__, self.__bus)
 
 
     # ----------------------------------------------------------------------------------------------------------------
