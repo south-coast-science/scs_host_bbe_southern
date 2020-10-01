@@ -68,4 +68,4 @@ class HostSerial(Serial):
 
     @property
     def __lock_name(self):
-        return self.__class__.__name__ + "-" + str(self._device_identifier)
+        return "%s-%s" % (self.__class__.__name__, self._device_identifier)
