@@ -20,9 +20,9 @@ import time
 
 import paho.mqtt.client as paho
 
-from scs_core.data.format import Format
 from scs_core.data.json import JSONify
 from scs_core.data.publication import Publication
+from scs_core.data.str import Str
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ class MQTTClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "MQTTClient:{subscribers:%s}" % Format.collection(self.__subscribers)
+        return "MQTTClient:{subscribers:%s}" % Str.collection(self.__subscribers)
 
 
 # --------------------------------------------------------------------------------------------------------------------
