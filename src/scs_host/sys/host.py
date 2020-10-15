@@ -16,6 +16,7 @@ import subprocess
 from pathlib import Path
 
 from scs_core.sys.disk_usage import DiskUsage
+from scs_core.sys.disk_volume import DiskVolume
 from scs_core.sys.ipv4_address import IPv4Address
 from scs_core.sys.node import Node
 
@@ -213,14 +214,25 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def disk_usage(cls, volume):
-        st = os.statvfs(volume)
+    def disk_volume(cls, mounted_on):
+        process = subprocess.Popen(['df'], stdout=subprocess.PIPE)
+        out, _ = process.communicate()
+        rows = out.decode().splitlines()[1:]
 
-        free = st.f_bavail * st.f_frsize
-        used = (st.f_blocks - st.f_bfree) * st.f_frsize
-        total = st.f_blocks * st.f_frsize
+        for row in rows:
+            volume = DiskVolume.construct_from_df_row(row)
 
-        return DiskUsage(volume, free, used, total)
+            if volume.mounted_on == mounted_on:
+                return volume
+
+        return None
+
+
+    @classmethod
+    def disk_usage(cls, path):
+        st = os.statvfs(path)
+
+        return DiskUsage.construct_from_statvfs(path, st)
 
 
     # ----------------------------------------------------------------------------------------------------------------
