@@ -18,12 +18,12 @@ from pathlib import Path
 from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.disk_volume import DiskVolume
 from scs_core.sys.ipv4_address import IPv4Address
-from scs_core.sys.node import Node
+from scs_core.sys.node import IoTNode
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Host(Node):
+class Host(IoTNode):
     """
     TI Sitara AM3358AZCZ100 processor
     """
@@ -67,11 +67,7 @@ class Host(Node):
     __TMP_DIR =             '/tmp/southcoastscience'            # hard-coded abs path
 
     __SCS_DIR =             'SCS'                               # hard-coded rel path
-
     __COMMAND_DIR =         'cmd'                               # hard-coded rel path
-    __CONF_DIR =            'conf'                              # hard-coded rel path
-    __AWS_DIR =             'aws'                               # hard-coded rel path
-    __OSIO_DIR =            'osio'                              # hard-coded rel path
 
     __LATEST_UPDATE =       "latest_update.txt"                 # hard-coded rel path
     __DFE_EEP_IMAGE =       'dfe_cape.eep'                      # hard-coded rel path
@@ -143,7 +139,7 @@ class Host(Node):
     @classmethod
     def software_update_report(cls):
         try:
-            f = open(os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__LATEST_UPDATE))
+            f = open(os.path.join(cls.scs_path(), cls.__LATEST_UPDATE))
             report = f.read().strip()
             f.close()
 
@@ -242,11 +238,6 @@ class Host(Node):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def home_dir(cls):
-        return os.environ[cls.OS_ENV_PATH] if cls.OS_ENV_PATH in os.environ else cls.__DEFAULT_HOME_DIR
-
-
-    @classmethod
     def lock_dir(cls):
         return cls.__LOCK_DIR
 
@@ -256,31 +247,23 @@ class Host(Node):
         return cls.__TMP_DIR
 
 
-    @classmethod
-    def scs_dir(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR)
-
+    # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def command_dir(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__COMMAND_DIR)
+    def home_path(cls):
+        return os.environ[cls.OS_ENV_PATH] if cls.OS_ENV_PATH in os.environ else cls.__DEFAULT_HOME_DIR
 
 
     @classmethod
-    def conf_dir(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__CONF_DIR)
+    def scs_path(cls):
+        return os.path.join(cls.home_path(), cls.__SCS_DIR)
 
 
     @classmethod
-    def aws_dir(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__AWS_DIR)
-
-
-    @classmethod
-    def osio_dir(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__OSIO_DIR)
+    def command_path(cls):
+        return os.path.join(cls.home_path(), cls.__SCS_DIR, cls.__COMMAND_DIR)
 
 
     @classmethod
     def eep_image(cls):
-        return os.path.join(cls.home_dir(), cls.__SCS_DIR, cls.__DFE_EEP_IMAGE)
+        return os.path.join(cls.home_path(), cls.__SCS_DIR, cls.__DFE_EEP_IMAGE)

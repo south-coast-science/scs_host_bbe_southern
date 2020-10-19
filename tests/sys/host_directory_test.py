@@ -11,7 +11,7 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-home_dir = Host.home_dir()
+home_dir = Host.home_path()
 print("home_dir: %s" % home_dir)
 
 print("-")
@@ -29,15 +29,15 @@ except NotImplementedError:
     print("tmp_dir: None")
 
 try:
-    command_dir = Host.command_dir()
-    print("command_dir: %s" % command_dir)
+    command_path = Host.command_path()
+    print("command_path: %s" % command_path)
 except NotImplementedError:
-    print("command_dir: None")
+    print("command_path: None")
 
 print("-")
 
-scs_dir = Host.scs_dir()
-print("scs dir: %s" % scs_dir)
+scs_path = Host.scs_path()
+print("scs_path: %s" % scs_path)
 
 conf_dir = Host.conf_dir()
 print("conf dir: %s" % conf_dir)
