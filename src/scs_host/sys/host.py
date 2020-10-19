@@ -261,9 +261,9 @@ class Host(IoTNode):
 
     @classmethod
     def command_path(cls):
-        return os.path.join(cls.home_path(), cls.__SCS_DIR, cls.__COMMAND_DIR)
+        return os.path.join(cls.scs_path(), cls.__COMMAND_DIR)
 
 
     @classmethod
     def eep_image(cls):
-        return os.path.join(cls.home_path(), cls.__SCS_DIR, cls.__DFE_EEP_IMAGE)
+        return os.path.join(cls.scs_path(), cls.__DFE_EEP_IMAGE)
