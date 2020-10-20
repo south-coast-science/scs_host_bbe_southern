@@ -11,8 +11,8 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-home_dir = Host.home_path()
-print("home_dir: %s" % home_dir)
+home_path = Host.home_path()
+print("home_path: %s" % home_path)
 
 print("-")
 
@@ -38,14 +38,5 @@ print("-")
 
 scs_path = Host.scs_path()
 print("scs_path: %s" % scs_path)
-
-conf_dir = Host.conf_dir()
-print("conf dir: %s" % conf_dir)
-
-aws_dir = Host.aws_dir()
-print("aws dir: %s" % aws_dir)
-
-osio_dir = Host.osio_dir()
-print("osio dir: %s" % osio_dir)
 
 print("-")
