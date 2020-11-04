@@ -27,8 +27,8 @@ class Scheduler(object):
     classdocs
     """
 
-    RELEASE_PERIOD =                0.3         # ScheduleItem release period
-    HOLD_PERIOD =                   0.6         # ScheduleRunner hold period
+    RELEASE_PERIOD =                0.3             # ScheduleItem release period
+    HOLD_PERIOD =                   0.6             # ScheduleRunner hold period
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ class Scheduler(object):
         """
         Constructor
         """
-        self.__schedule = schedule              # Schedule
-        self.__verbose = verbose                # bool
+        self.__schedule = schedule                  # Schedule
+        self.__verbose = verbose                    # bool
 
-        self.__jobs = []                        # array of SchedulerItem
+        self.__jobs = []                            # array of SchedulerItem
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -104,8 +104,8 @@ class SchedulerItem(SynchronisedProcess):
 
         self._value.append(True)
 
-        self.__item = item                                      # ScheduleItem
-        self.__verbose = verbose                                # bool
+        self.__item = item                                          # ScheduleItem
+        self.__verbose = verbose                                    # bool
 
         self.__mutex = BinarySemaphore(self.item.name, True)
 
@@ -116,7 +116,7 @@ class SchedulerItem(SynchronisedProcess):
     def stop(self):
         try:
             try:
-                self.__mutex.acquire(self.item.interval)        # attempt to re-capture the mutex
+                self.__mutex.acquire(self.item.interval)            # attempt to re-capture the mutex
             except (BusyError, SignalError):
                 pass
 
