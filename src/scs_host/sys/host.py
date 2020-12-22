@@ -128,11 +128,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
         pass
 
 
-    @staticmethod
-    def mcu_temp():
-        return None
-
-
     @classmethod
     def shutdown(cls):
         subprocess.call([cls.__SHUTDOWN_CMD, 'now'])
@@ -179,6 +174,14 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def server_ipv4_address(cls):
         return IPv4Address.construct(cls.__SERVER_IPV4_ADDRESS)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # status...
+
+    @classmethod
+    def status(cls):
+        return None
 
 
     # ----------------------------------------------------------------------------------------------------------------
