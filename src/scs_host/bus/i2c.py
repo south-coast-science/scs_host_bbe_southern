@@ -14,7 +14,10 @@ import fcntl
 import io
 import time
 
+from abc import abstractmethod
+
 from scs_host.lock.lock import Lock
+from scs_host.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -37,16 +40,21 @@ class I2C(object):
 
     __LOCK_TIMEOUT =        2.0
 
-
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def open(cls, bus):
+    @abstractmethod
+    def open(cls):
+        pass
+
+
+    @classmethod
+    def open_for_bus(cls, bus):
         if cls.__FR is not None and cls.__FW is not None:
             return
 
-        cls.__FR = io.open("/dev/i2c-%d" % bus, "rb", buffering=0)      # hard-coded path
-        cls.__FW = io.open("/dev/i2c-%d" % bus, "wb", buffering=0)      # hard-coded path
+        cls.__FR = io.open("/dev/i2c-%d" % bus, "rb", buffering=0)
+        cls.__FW = io.open("/dev/i2c-%d" % bus, "wb", buffering=0)
 
 
     @classmethod
@@ -65,12 +73,12 @@ class I2C(object):
     @classmethod
     def start_tx(cls, device):
         if cls.__FR is None or cls.__FW is None:
-            raise RuntimeError("I2C.start_tx: bus is not open.")
+            raise RuntimeError("cls.start_tx: bus is not open.")
 
-        Lock.acquire(cls.__name__, I2C.__LOCK_TIMEOUT)
+        Lock.acquire(cls.__name__, cls.__LOCK_TIMEOUT)
 
-        fcntl.ioctl(cls.__FR, I2C.__I2C_SLAVE, device)
-        fcntl.ioctl(cls.__FW, I2C.__I2C_SLAVE, device)
+        fcntl.ioctl(cls.__FR, cls.__I2C_SLAVE, device)
+        fcntl.ioctl(cls.__FW, cls.__I2C_SLAVE, device)
 
 
     @classmethod
@@ -82,7 +90,7 @@ class I2C(object):
 
     @classmethod
     def read(cls, count):
-        read_bytes = list(I2C.__FR.read(count))
+        read_bytes = list(cls.__FR.read(count))
         return read_bytes[0] if count == 1 else read_bytes
 
 
@@ -118,7 +126,7 @@ class I2C(object):
 
     @classmethod
     def write(cls, *values):
-        I2C.__FW.write(bytearray(values))
+        cls.__FW.write(bytearray(values))
 
 
     @classmethod
@@ -129,12 +137,12 @@ class I2C(object):
             write_bytes += bytes([value16 >> 8])
             write_bytes += bytes([value16 & 0xff])
 
-        I2C.__FW.write(write_bytes)
+        cls.__FW.write(write_bytes)
 
 
     @classmethod
     def write_addr(cls, addr, *values):
-        I2C.__FW.write(bytearray([addr]) + bytes(values))
+        cls.__FW.write(bytearray([addr]) + bytes(values))
 
 
     @classmethod
@@ -142,4 +150,40 @@ class I2C(object):
         addr_msb = addr >> 8
         addr_lsb = addr & 0xff
 
-        I2C.__FW.write(bytearray([addr_msb, addr_lsb]) + bytes(values))
+        cls.__FW.write(bytearray([addr_msb, addr_lsb]) + bytes(values))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class SensorI2C(I2C):
+    """
+    I2C bus abstraction over UNIX /dev/i2c-n
+    """
+
+    @classmethod
+    def open(cls):
+        cls.open_for_bus(Host.I2C_SENSORS)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class UtilityI2C(I2C):
+    """
+    I2C bus abstraction over UNIX /dev/i2c-n
+    """
+
+    @classmethod
+    def open(cls):
+        cls.open_for_bus(Host.I2C_UTILITIES)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class EEPROMI2C(I2C):
+    """
+    I2C bus abstraction over UNIX /dev/i2c-n
+    """
+
+    @classmethod
+    def open(cls):
+        cls.open_for_bus(Host.I2C_EEPROM)
