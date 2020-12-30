@@ -32,8 +32,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     OS_ENV_PATH =           'SCS_ROOT_PATH'
 
-    I2C_EEPROM =            2
-    I2C_SENSORS =           2
+    I2C_COMMON =            2
 
     DFE_EEPROM_ADDR =       0x50
     DFE_UID_ADDR =          0x58
