@@ -22,7 +22,7 @@ from scs_core.sys.disk_volume import DiskVolume
 from scs_core.sys.ipv4_address import IPv4Address
 from scs_core.sys.node import IoTNode
 from scs_core.sys.persistence_manager import FilesystemPersistenceManager
-from scs_core.sys.sim import ModemList, SIM
+from scs_core.sys.sim import ModemList, SIMList, SIM
 from scs_core.sys.uptime_datum import UptimeDatum
 
 
@@ -193,12 +193,22 @@ class Host(IoTNode, FilesystemPersistenceManager):
             return None
 
         modems = ModemList.construct_from_mmcli(stdout_bytes.decode().splitlines())
-
         if len(modems) < 1:
             return None
 
+        # SIMs...
+        p = subprocess.Popen(['mmcli', '-K', '-m', modems.code(0)], stdout=subprocess.PIPE)
+        stdout_bytes, _ = p.communicate(timeout=10)
+
+        if p.returncode != 0:
+            return None
+
+        sims = SIMList.construct_from_mmcli(stdout_bytes.decode().splitlines())
+        if len(sims) < 1:
+            return None
+
         # SIM...
-        p = subprocess.Popen(['mmcli', '-K', '-i', modems.code(0)], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['mmcli', '-K', '-i', sims.code(0)], stdout=subprocess.PIPE)
         stdout_bytes, _ = p.communicate(timeout=10)
 
         if p.returncode != 0:
