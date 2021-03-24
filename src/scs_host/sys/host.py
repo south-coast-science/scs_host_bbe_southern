@@ -197,7 +197,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
             return None
 
         # SIMs...
-        p = subprocess.Popen(['mmcli', '-K', '-m', modems.code(0)], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['mmcli', '-K', '-m', modems.number(0)], stdout=subprocess.PIPE)
         stdout_bytes, _ = p.communicate(timeout=10)
 
         if p.returncode != 0:
@@ -208,7 +208,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
             return None
 
         # SIM...
-        p = subprocess.Popen(['mmcli', '-K', '-i', sims.code(0)], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['mmcli', '-K', '-i', sims.number(0)], stdout=subprocess.PIPE)
         stdout_bytes, _ = p.communicate(timeout=10)
 
         if p.returncode != 0:
