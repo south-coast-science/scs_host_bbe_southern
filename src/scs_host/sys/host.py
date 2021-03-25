@@ -78,12 +78,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
 
     # ----------------------------------------------------------------------------------------------------------------
-    # commands...
-
-    __SHUTDOWN_CMD =        '/sbin/shutdown'                    # hard-coded path
-
-
-    # ----------------------------------------------------------------------------------------------------------------
     # host acting as DHCP server...
 
     __SERVER_IPV4_ADDRESS = None                                # had-coded abs path
@@ -130,9 +124,9 @@ class Host(IoTNode, FilesystemPersistenceManager):
         pass
 
 
-    @classmethod
-    def shutdown(cls):
-        call([cls.__SHUTDOWN_CMD, 'now'])
+    @staticmethod
+    def shutdown():
+        call(['systemctl', 'poweroff', '-i'])
 
 
     @classmethod
