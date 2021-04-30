@@ -179,7 +179,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def modem(cls):
         stdout = cls.__modem_list()
-
         if not stdout:
             return None
 
@@ -189,7 +188,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def modem_conn(cls):
         stdout = cls.__modem_list()
-
         if not stdout:
             return None
 
@@ -199,7 +197,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def sim(cls):
         stdout = cls.__modem_list()
-
         if not stdout:
             return None
 
