@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Created on 4 Sep 2020
 Updated 23 Mar 2021
@@ -35,9 +37,10 @@ def get_version(rel_path):
 with open('requirements.txt') as req_txt:
     required = [line for line in req_txt.read().splitlines() if line]
 
+
 setup(
     name='scs_host_bbe_southern',
-    version=get_version("scs_host_bbe_southern/__init__.py"),
+    version=get_version("src/scs_host/__init__.py"),
     description='Host abstractions for data producers or consumers running South Coast Science Debian on the \
     BeagleBone Black.',
     author='South Coast Science',
