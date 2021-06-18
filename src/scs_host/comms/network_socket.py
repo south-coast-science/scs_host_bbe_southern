@@ -28,13 +28,13 @@ class NetworkSocket(ProcessComms):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, host, port=2000):        # a receiving socket should have host ''
+    def __init__(self, host='', port=2000):        # a receiving socket should have host ''
         """
         Constructor
         """
         self.__address = (host, port)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
         self.__conn = None
 
 
@@ -110,7 +110,7 @@ class NetworkSocket(ProcessComms):
 
                 time.sleep(0.1)
 
-                self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.__socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
                 self.connect(True)
 
 
