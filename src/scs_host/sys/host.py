@@ -244,8 +244,11 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def __modem_list(cls):
         # ModemList...
-        p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=10)
+        try:
+            p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
+            stdout, _ = p.communicate(timeout=10)
+        except FileNotFoundError:
+            return None
 
         if p.returncode != 0:
             return None
