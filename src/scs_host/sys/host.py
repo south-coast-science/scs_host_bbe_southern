@@ -179,8 +179,11 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def networks(cls):
-        p = Popen(['nmcli', 'd'], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=10)
+        try:
+            p = Popen(['nmcli', 'd'], stdout=PIPE, stderr=DEVNULL)
+            stdout, _ = p.communicate(timeout=10)
+        except FileNotFoundError:
+            return None
 
         if p.returncode != 0:
             return None
