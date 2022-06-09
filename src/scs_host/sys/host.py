@@ -76,11 +76,13 @@ class Host(IoTNode, FilesystemPersistenceManager):
     __LATEST_UPDATE =       "latest_update.txt"                 # hard-coded rel path
     __DFE_EEP_IMAGE =       'dfe_cape.eep'                      # hard-coded rel path
 
+    __COMMAND_TIMEOUT =     20                                  # seconds
+
 
     # ----------------------------------------------------------------------------------------------------------------
     # host acting as DHCP server...
 
-    __SERVER_IPV4_ADDRESS = None                                # had-coded abs path
+    __SERVER_IPV4_ADDRESS = None                                # hard-coded abs path
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -181,7 +183,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
     def networks(cls):
         try:
             p = Popen(['nmcli', 'd'], stdout=PIPE, stderr=DEVNULL)
-            stdout, _ = p.communicate(timeout=10)
+            stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
         except FileNotFoundError:
             return None
 
@@ -225,7 +227,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
         # SIM (assume one SIM)...
         p = Popen(['mmcli', '-K', '-i', sims.number(0)], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=10)
+        stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
             return None
@@ -236,7 +238,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def __modem_manager_is_enabled(cls):
         p = Popen(['systemctl', '-q', 'is-enabled', 'ModemManager.service'], stdout=PIPE, stderr=DEVNULL)
-        p.communicate(timeout=10)
+        p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         return p.returncode == 0
 
@@ -246,7 +248,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         # ModemList...
         try:
             p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
-            stdout, _ = p.communicate(timeout=10)
+            stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
         except FileNotFoundError:
             return None
 
@@ -260,7 +262,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
         # Modem (assume one modem)...
         p = Popen(['mmcli', '-K', '-m', modems.number(0)], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=10)
+        stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
             return None
