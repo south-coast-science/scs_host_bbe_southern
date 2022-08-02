@@ -1,0 +1,12 @@
+[Unit]
+Description=Make eeprom system file accessible to scs user
+
+Before=scs_data_collection.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=True
+ExecStart=/bin/sh -c 'chown root.scs /sys/bus/i2c/devices/0-0050/eeprom ; chmod 660 /sys/bus/i2c/devices/0-0050/eeprom'
+
+[Install]
+WantedBy=multi-user.target
