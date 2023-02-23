@@ -12,13 +12,14 @@ import re
 import socket
 
 from pathlib import Path
-from subprocess import check_output, call, Popen, PIPE, DEVNULL
+from subprocess import check_output, call, Popen, PIPE, DEVNULL, TimeoutExpired
 
 from scs_core.estate.git_pull import GitPull
 
 from scs_core.sys.disk_usage import DiskUsage
 from scs_core.sys.disk_volume import DiskVolume
 from scs_core.sys.ipv4_address import IPv4Address
+from scs_core.sys.logging import Logging
 from scs_core.sys.modem import ModemList, Modem, ModemConnection, SIMList, SIM
 from scs_core.sys.network import Networks
 from scs_core.sys.node import IoTNode
@@ -76,7 +77,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
     __LATEST_UPDATE =       "latest_update.txt"                 # hard-coded rel path
     __DFE_EEP_IMAGE =       'dfe_cape.eep'                      # hard-coded rel path
 
-    __COMMAND_TIMEOUT =     20                                  # seconds
+    __COMMAND_TIMEOUT =     10                                  # seconds
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -184,7 +185,12 @@ class Host(IoTNode, FilesystemPersistenceManager):
         try:
             p = Popen(['nmcli', 'd'], stdout=PIPE, stderr=DEVNULL)
             stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
+
         except FileNotFoundError:
+            return None
+
+        except TimeoutExpired as ex:
+            Logging.getLogger().error(repr(ex))
             return None
 
         if p.returncode != 0:
@@ -250,6 +256,10 @@ class Host(IoTNode, FilesystemPersistenceManager):
             p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
             stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
         except FileNotFoundError:
+            return None
+
+        except TimeoutExpired as ex:
+            Logging.getLogger().error(repr(ex))
             return None
 
         if p.returncode != 0:
