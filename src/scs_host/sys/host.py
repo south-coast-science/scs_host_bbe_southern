@@ -7,8 +7,6 @@ http://dumb-looks-free.blogspot.co.uk/2014/05/beaglebone-black-bbb-revision-seri
 """
 
 import os
-import pyudev
-import re
 import socket
 
 from pathlib import Path
@@ -45,11 +43,9 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_ADDR =        '48030000'                          # hard-coded memory-mapped io address
-    __OPC_SPI_DEVICE =      0                                   # hard-coded path
+    __OPC_SPI_DEV_PATH =    '/dev/spi/by-connector/H1'          # udev-managed symlink to spidev  
 
-    __NDIR_SPI_ADDR =       '481a0000'                          # hard-coded memory-mapped io address
-    __NDIR_SPI_DEVICE =     0                                   # hard-coded path
+    __NDIR_SPI_DEV_PATH =   '/dev/spi/by-connector/H3'          # udev-managed symlink to spidev  
 
     __GPS_DEVICE =          1                                   # hard-coded path
 
@@ -84,32 +80,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # host acting as DHCP server...
 
     __SERVER_IPV4_ADDRESS = None                                # hard-coded abs path
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @staticmethod
-    def spi_bus(spi_address, spi_device):
-        context = pyudev.Context()
-
-        kernel_path = '/ocp/spi@' + spi_address + '/channel@' + str(spi_device)
-
-        for device in context.list_devices(subsystem='spidev'):
-            parent = device.parent
-
-            if type(parent) and parent['OF_FULLNAME'] == kernel_path:
-                node = device.device_node
-
-                match = re.match(r'\D+(\d+).\d+', node)              # e.g. /dev/spidev1.0
-
-                if match is None:
-                    continue
-
-                groups = match.groups()
-
-                return int(groups[0])
-
-        raise OSError("No SPI bus could be found for %s" % kernel_path)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -284,23 +254,12 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # SPI...
 
     @classmethod
-    def ndir_spi_bus(cls):
-        return cls.spi_bus(cls.__NDIR_SPI_ADDR, cls.__NDIR_SPI_DEVICE)
-
-
-    @classmethod
-    def ndir_spi_device(cls):
-        return cls.__NDIR_SPI_DEVICE
-
+    def ndir_spi_dev_path(cls):
+        return cls.__NDIR_SPI_DEV_PATH
 
     @classmethod
-    def opc_spi_bus(cls):
-        return cls.spi_bus(cls.__OPC_SPI_ADDR, cls.__OPC_SPI_DEVICE)
-
-
-    @classmethod
-    def opc_spi_device(cls):
-        return cls.__OPC_SPI_DEVICE
+    def opc_spi_dev_path(cls):
+        return cls.__OPC_SPI_DEV_PATH
 
 
     # ----------------------------------------------------------------------------------------------------------------
