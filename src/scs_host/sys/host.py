@@ -43,9 +43,9 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # ----------------------------------------------------------------------------------------------------------------
     # devices...
 
-    __OPC_SPI_DEV_PATH =    '/dev/spi/by-connector/H1'          # udev-managed symlink to spidev  
+    __OPC_SPI_DEV_PATH =    '/dev/spi/by-connector/H1'          # udev-managed symlink to spidev
 
-    __NDIR_SPI_DEV_PATH =   '/dev/spi/by-connector/H3'          # udev-managed symlink to spidev  
+    __NDIR_SPI_DEV_PATH =   '/dev/spi/by-connector/H3'          # udev-managed symlink to spidev
 
     __GPS_DEVICE =          1                                   # hard-coded path
 
@@ -254,12 +254,13 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # SPI...
 
     @classmethod
-    def ndir_spi_dev_path(cls):
-        return cls.__NDIR_SPI_DEV_PATH
-
-    @classmethod
     def opc_spi_dev_path(cls):
         return cls.__OPC_SPI_DEV_PATH
+
+
+    @classmethod
+    def ndir_spi_dev_path(cls):
+        return cls.__NDIR_SPI_DEV_PATH
 
 
     # ----------------------------------------------------------------------------------------------------------------

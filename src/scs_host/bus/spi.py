@@ -81,6 +81,7 @@ class SPI(object):
     def release_lock(self):
         Lock.release(self.__lock_name)
 
+
     @property
     def __lock_name(self):
         return ("%s-%s" % (self.__class__.__name__, self.__dev_path)).replace('/', '_')
