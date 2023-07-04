@@ -132,6 +132,11 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # network identity...
 
     @classmethod
+    def hostname_prefix(cls):
+        return cls.__HOSTNAME_PREFIX
+
+
+    @classmethod
     def name(cls):
         return socket.gethostname()
 
@@ -324,11 +329,6 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     # ----------------------------------------------------------------------------------------------------------------
     # filesystem paths...
-
-    @classmethod
-    def hostname_prefix(cls):
-        return cls.__HOSTNAME_PREFIX
-
 
     @classmethod
     def home_path(cls):
