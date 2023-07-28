@@ -45,7 +45,10 @@ class Flag(object):
 
 
     def is_raised(self):
-        return self.name in [file.name for file in Filesystem.ls(Host.tmp_dir())]
+        if not os.path.exists(Host.tmp_dir()):
+            return False
+
+        return self.name in os.listdir(Host.tmp_dir())
 
 
     def wait_for_raised(self):
