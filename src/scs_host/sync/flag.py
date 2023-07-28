@@ -22,6 +22,8 @@ class Flag(object):
     classdocs
     """
 
+    __WAIT_LOOP_DELAY = 1.0         # seconds
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, name):
@@ -55,7 +57,7 @@ class Flag(object):
         self.__logger.info("waiting for %s..." % self.name)
 
         while not self.is_raised():
-            time.sleep(1)
+            time.sleep(self.__WAIT_LOOP_DELAY)
 
 
     # ----------------------------------------------------------------------------------------------------------------
