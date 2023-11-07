@@ -32,6 +32,8 @@ class Host(IoTNode, FilesystemPersistenceManager):
     TI Sitara AM3358AZCZ100 processor
     """
 
+    MINIMUM_OS_RELEASE =    '6.1.0'
+
     OS_ENV_PATH =           'SCS_ROOT_PATH'
 
     I2C_COMMON =            2
@@ -144,6 +146,14 @@ class Host(IoTNode, FilesystemPersistenceManager):
     @classmethod
     def server_ipv4_address(cls):
         return IPv4Address.construct(cls.__SERVER_IPV4_ADDRESS)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # version...
+
+    @classmethod
+    def minimum_os_release(cls):
+        return cls.MINIMUM_OS_RELEASE
 
 
     # ----------------------------------------------------------------------------------------------------------------
