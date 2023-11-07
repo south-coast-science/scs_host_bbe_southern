@@ -13,4 +13,4 @@ from scs_host.sys.host import Host
 
 print("minimum: %s" % Host.MINIMUM_OS_RELEASE)
 
-print("acceptable: %s" % Host.is_acceptable_os_release())
+print("acceptable: %s" % Host.has_acceptable_os_release())
