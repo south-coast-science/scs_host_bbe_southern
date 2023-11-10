@@ -17,6 +17,8 @@ from multiprocessing import Manager
 from scs_core.sync.interval_timer import IntervalTimer
 from scs_core.sync.synchronised_process import SynchronisedProcess
 
+from scs_core.sys.logging import Logging
+
 from scs_host.sync.binary_semaphore import BinarySemaphore, BusyError, SignalError
 
 
@@ -98,6 +100,9 @@ class SchedulerItem(SynchronisedProcess):
         """
         Constructor
         """
+        self.__logger = Logging.getLogger()
+        self.__logging_specification = Logging.specification()
+
         manager = Manager()
 
         SynchronisedProcess.__init__(self, manager.list())
@@ -127,6 +132,9 @@ class SchedulerItem(SynchronisedProcess):
 
 
     def run(self):
+        Logging.replicate(self.__logging_specification)
+        self.__logger = Logging.getLogger()
+
         try:
             timer = IntervalTimer(self.item.interval)
 
@@ -144,7 +152,7 @@ class SchedulerItem(SynchronisedProcess):
                     # release...
                     self.__mutex.release()
 
-                    print('%s.run: released on busy' % self.item.name, file=sys.stderr)
+                    self.__logger.error('%s.run: released on busy' % self.item.name)
                     sys.stderr.flush()
 
         except (ConnectionError, KeyboardInterrupt, SignalError, SystemExit):
