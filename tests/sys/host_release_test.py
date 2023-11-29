@@ -11,6 +11,6 @@ from scs_host.sys.host import Host
 
 # --------------------------------------------------------------------------------------------------------------------
 
-print("minimum: %s" % Host.MINIMUM_OS_RELEASE)
+print("minimum: %s" % Host.minimum_required_os_release())
 
-print("acceptable: %s" % Host.has_acceptable_os_release())
+print("actual: %s" % Host.os_release())
