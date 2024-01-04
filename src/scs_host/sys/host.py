@@ -197,7 +197,8 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def modem(cls):
-        stdout = cls.__modem_list()
+        stdout = cls.__modem_state()
+
         if not stdout:
             return None
 
@@ -209,7 +210,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         if not cls.__modem_manager_is_enabled():
             return None
 
-        stdout = cls.__modem_list()
+        stdout = cls.__modem_state()
 
         if not stdout:
             return ModemConnection.null_datum()
@@ -219,11 +220,13 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def sim(cls):
-        stdout = cls.__modem_list()
+        stdout = cls.__modem_state()
+
         if not stdout:
             return None
 
         sims = SIMList.construct_from_mmcli(stdout.decode().splitlines())
+
         if len(sims) < 1:
             return None
 
@@ -246,24 +249,29 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
 
     @classmethod
-    def __modem_list(cls):
+    def __modem_state(cls):
+        logger = Logging.getLogger()
+
         # ModemList...
         try:
             p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
             stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
-        except FileNotFoundError:
+        except FileNotFoundError as ex:
+            logger.error(repr(ex))
             return None
 
         except TimeoutExpired as ex:
-            Logging.getLogger().error(repr(ex))
+            logger.error(repr(ex))
             return None
 
         if p.returncode != 0:
+            logger.error("mmcli -L error: '%s'" % stdout.decode())
             return None
 
         modems = ModemList.construct_from_mmcli(stdout.decode().splitlines())
 
         if len(modems) < 1:
+            logger.error("no modem found")
             return None
 
         # Modem (assume one modem)...
@@ -271,6 +279,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
+            logger.error("mmcli -m error: '%s'" % stdout.decode())
             return None
 
         return stdout
