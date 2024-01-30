@@ -24,7 +24,7 @@ class HostSerial(Serial):
     __PORT_PREFIX = "/dev/ttyO"             # hard-coded path
 
     __POST_OPEN_DELAY =     0.1             # seconds
-    __POST_RELEASE_DELAY =  0.1             # seconds
+    __POST_RELEASE_DELAY =  0.5             # seconds
 
     # ----------------------------------------------------------------------------------------------------------------
 
