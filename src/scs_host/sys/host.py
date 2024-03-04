@@ -220,7 +220,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def sim(cls):
-        # logger = Logging.getLogger()
+        logger = Logging.getLogger()
 
         stdout = cls.__modem_state()
 
@@ -237,7 +237,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
-            # logger.error("mmcli -i: error")
+            logger.info("mmcli -i: error")
             return None
 
         return SIM.construct_from_mmcli(stdout.decode().splitlines())
@@ -260,21 +260,21 @@ class Host(IoTNode, FilesystemPersistenceManager):
             p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
             stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
         except FileNotFoundError as ex:
-            logger.error(repr(ex))
+            logger.info(repr(ex))
             return None
 
         except TimeoutExpired as ex:
-            logger.error(repr(ex))
+            logger.info(repr(ex))
             return None
 
         if p.returncode != 0:
-            # logger.error("mmcli -L: error")
+            logger.info("mmcli -L: error")
             return None
 
         modems = ModemList.construct_from_mmcli(stdout.decode().splitlines())
 
         if len(modems) < 1:
-            logger.error("no modem found")
+            logger.info("no modem found")
             return None
 
         # Modem (assume one modem)...
@@ -282,7 +282,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
-            # logger.error("mmcli -m: error")
+            logger.info("mmcli -m: error")
             return None
 
         return stdout
