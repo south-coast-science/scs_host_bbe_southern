@@ -220,6 +220,8 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def sim(cls):
+        logger = Logging.getLogger()
+
         stdout = cls.__modem_state()
 
         if not stdout:
@@ -232,9 +234,10 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
         # SIM (assume one SIM)...
         p = Popen(['mmcli', '-K', '-i', sims.number(0)], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
+        stdout, stderr = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
+            logger.error("mmcli -i: '%s'" % stderr.decode())
             return None
 
         return SIM.construct_from_mmcli(stdout.decode().splitlines())
@@ -255,7 +258,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
         # ModemList...
         try:
             p = Popen(['mmcli', '-K', '-L'], stdout=PIPE, stderr=DEVNULL)
-            stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
+            stdout, stderr = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
         except FileNotFoundError as ex:
             logger.error(repr(ex))
             return None
@@ -265,7 +268,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
             return None
 
         if p.returncode != 0:
-            logger.error("mmcli -L error: '%s'" % stdout.decode())
+            logger.error("mmcli -L: '%s'" % stderr.decode())
             return None
 
         modems = ModemList.construct_from_mmcli(stdout.decode().splitlines())
@@ -276,10 +279,10 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
         # Modem (assume one modem)...
         p = Popen(['mmcli', '-K', '-m', modems.number(0)], stdout=PIPE, stderr=DEVNULL)
-        stdout, _ = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
+        stdout, stderr = p.communicate(timeout=cls.__COMMAND_TIMEOUT)
 
         if p.returncode != 0:
-            logger.error("mmcli -m error: '%s'" % stdout.decode())
+            logger.error("mmcli -m: '%s'" % stderr.decode())
             return None
 
         return stdout
