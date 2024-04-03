@@ -33,9 +33,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
     TI Sitara AM3358AZCZ100 processor 4.19.232
     """
 
-    # TODO: update OS version as needed
-
-    MINIMUM_OS_RELEASE = '4.19.232'                             # was 6.1.0
+    MINIMUM_OS_RELEASE = '4.19.232'                       # was 4.19.232, 6.1.0, 6.1.77
     MINIMUM_GREENGRASS_RELEASE = '1.11.5'
 
     OS_ENV_PATH =           'SCS_ROOT_PATH'
