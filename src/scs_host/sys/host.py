@@ -33,8 +33,8 @@ class Host(IoTNode, FilesystemPersistenceManager):
     TI Sitara AM3358AZCZ100 processor 4.19.232
     """
 
-    MINIMUM_OS_VERSION =            '10.13'
-    MINIMUM_KERNEL_VERSION =        '4.19.232'                  # was 4.19.232, 6.1.0, 6.1.77
+    OS_WHITELIST =                  ['10.13']
+    KERNEL_WHITELIST =              ['4.19.232-bone75', '6.1.80-bone31']
     MINIMUM_GREENGRASS_VERSION =    '1.11.5'
 
     OS_ENV_PATH =           'SCS_ROOT_PATH'
@@ -155,13 +155,13 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # version...
 
     @classmethod
-    def minimum_required_os_version(cls):
-        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_OS_VERSION)
+    def has_acceptable_os_release(cls):
+        return cls.os_release() in cls.OS_WHITELIST
 
 
     @classmethod
-    def minimum_required_kernel_version(cls):
-        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_KERNEL_VERSION)
+    def has_acceptable_kernel_release(cls):
+        return cls.kernel_release() in cls.KERNEL_WHITELIST
 
 
     @classmethod
