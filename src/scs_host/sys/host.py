@@ -33,8 +33,9 @@ class Host(IoTNode, FilesystemPersistenceManager):
     TI Sitara AM3358AZCZ100 processor 4.19.232
     """
 
-    MINIMUM_KERNEL_RELEASE = '4.19.232'                         # was 4.19.232, 6.1.0, 6.1.77
-    MINIMUM_GREENGRASS_RELEASE = '1.11.5'
+    MINIMUM_OS_VERSION =            '10.13'
+    MINIMUM_KERNEL_VERSION =        '4.19.232'                  # was 4.19.232, 6.1.0, 6.1.77
+    MINIMUM_GREENGRASS_VERSION =    '1.11.5'
 
     OS_ENV_PATH =           'SCS_ROOT_PATH'
 
@@ -154,13 +155,18 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # version...
 
     @classmethod
-    def minimum_required_kernel_release(cls):
-        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_KERNEL_RELEASE)
+    def minimum_required_os_version(cls):
+        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_OS_VERSION)
 
 
     @classmethod
-    def minimum_required_greengrass_release(cls):
-        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_GREENGRASS_RELEASE)
+    def minimum_required_kernel_version(cls):
+        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_KERNEL_VERSION)
+
+
+    @classmethod
+    def minimum_required_greengrass_version(cls):
+        return SoftwareVersion.construct_from_jdict(cls.MINIMUM_GREENGRASS_VERSION)
 
 
     # ----------------------------------------------------------------------------------------------------------------
