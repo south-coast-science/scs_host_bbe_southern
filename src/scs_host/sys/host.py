@@ -3,7 +3,7 @@ Created on 16 Nov 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-http://dumb-looks-free.blogspot.co.uk/2014/05/beaglebone-black-bbb-revision-serial.html
+https://dumb-looks-free.blogspot.co.uk/2014/05/beaglebone-black-bbb-revision-serial.html
 """
 
 import os
