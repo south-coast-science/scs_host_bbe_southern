@@ -3,7 +3,7 @@ Created on 10 Aug 2016
 
 @author: Bruno Beloff (bruno.beloff@southcoastscience.com)
 
-http://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep
+https://stackoverflow.com/questions/1133857/how-accurate-is-pythons-time-sleep
 """
 
 import os
@@ -155,7 +155,7 @@ class Lock(object):
 
     @classmethod
     def __name_dir(cls, name):
-        return os.path.join(Host.lock_dir(), name)
+        return str(os.path.join(Host.lock_dir(), name))
 
 
     @classmethod
