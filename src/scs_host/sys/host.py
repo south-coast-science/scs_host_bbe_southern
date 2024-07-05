@@ -72,7 +72,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     __DEFAULT_HOME_DIR =    '/home/scs'                         # hard-coded abs path
     __LOCK_DIR =            '/run/lock/southcoastscience'       # hard-coded abs path
-    __TMP_DIR =             '/dev/shm/southcoastscience'        # hard-coded abs path
+    __TMP_DIR =             '/dev/shm/southcoastscience'        # hard-coded abs path   was /tmp/southcoastscience
 
     __SCS_DIR =             'SCS'                               # hard-coded rel path
     __COMMAND_DIR =         'cmd'                               # hard-coded rel path
@@ -86,23 +86,21 @@ class Host(IoTNode, FilesystemPersistenceManager):
     # ----------------------------------------------------------------------------------------------------------------
     # host acting as DHCP server...
 
-    __SERVER_IPV4_ADDRESS = None                                # hard-coded abs path
+    __SERVER_IPV4_ADDRESS = None
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
     def init(cls):
-        os.makedirs(cls.__TMP_DIR, exist_ok=True)
+        os.makedirs(cls.__TMP_DIR, exist_ok=True)       # TODO: test this on BBE / Cube
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @staticmethod
     def serial_number():
-        serial = os.popen("hexdump -e '8/1 \"%c\"' /sys/bus/i2c/devices/0-0050/eeprom -s 16 -n 12").readline()
-
-        return serial
+        return os.popen("hexdump -e '8/1 \"%c\"' /sys/bus/i2c/devices/0-0050/eeprom -s 16 -n 12").readline()
 
 
     @staticmethod
