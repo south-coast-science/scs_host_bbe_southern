@@ -93,7 +93,7 @@ class Host(IoTNode, FilesystemPersistenceManager):
 
     @classmethod
     def init(cls):
-        os.makedirs(cls.__TMP_DIR, exist_ok=True)       # TODO: test this on BBE / Cube
+        os.makedirs(cls.__TMP_DIR, exist_ok=True)
 
 
     # ----------------------------------------------------------------------------------------------------------------
