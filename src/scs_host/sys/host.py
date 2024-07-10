@@ -379,10 +379,9 @@ class Host(IoTNode, FilesystemPersistenceManager):
     def __make_tmp_dir(cls):
         try:
             os.mkdir(cls.__TMP_DIR)
+            os.chmod(cls.__TMP_DIR, 0o777)
         except FileExistsError:
             pass
-
-        os.chmod(cls.__TMP_DIR, 0o777)
 
 
     # ----------------------------------------------------------------------------------------------------------------
